@@ -52,6 +52,13 @@ def calc_labels(batch_size, numcams):
         labels[i:i+numframes, i:i+numframes] = 1
     return labels
 
+def calc_psd(x):
+    # x = x.squeeze()
+    dft = torch.fft.fft2(x)
+    avgpsd =  torch.mean(torch.mul(dft, dft.conj()).real, dim=0)
+    r = torch.mean(torch.log(avgpsd)) - torch.log(torch.mean(avgpsd))
+    return r
+    
 
 class OneClassLoss(nn.Module):
     """
