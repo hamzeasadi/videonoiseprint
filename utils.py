@@ -64,10 +64,11 @@ class OneClassLoss(nn.Module):
     """
     doc
     """
-    def __init__(self, batch_size, num_cams, margin) -> None:
+    def __init__(self, batch_size, num_cams, margin, reg) -> None:
         super().__init__()
         self.bs = batch_size
         self.nc = num_cams
+        self.reg = reg
         distmtxdim = num_cams * (batch_size//num_cams)
         self.m = margin*torch.ones(size=(distmtxdim, distmtxdim), device=dev, dtype=torch.float32)
         self.lbls = calc_labels(batch_size=batch_size, numcams=num_cams)
@@ -75,9 +76,12 @@ class OneClassLoss(nn.Module):
 
     def forward(self, X):
         Xs = X.squeeze()
+
         distmatrix = euclidean_distance_matrix(x=Xs)
         logits = self.m - torch.square(distmatrix)
-        return self.crt(logits, self.lbls)
+        l1 = self.crt(logits, self.lbls)
+        l2 = calc_psd(x=Xs)
+        return l1 - self.reg*l2
 
 
 

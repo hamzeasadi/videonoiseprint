@@ -22,6 +22,8 @@ parser.add_argument('--modelname', '-mn', type=str, required=True, default='None
 parser.add_argument('--epochs', '-e', type=int, required=False, metavar='epochs', default=1)
 parser.add_argument('--batch_size', '-bs', type=int, required=True, metavar='numbatches', default=198)
 parser.add_argument('--margin', '-m', type=float, required=True, metavar='margin', default=1.1)
+parser.add_argument('--reg', '-r', type=float, required=True, metavar='reg', default=1.1)
+parser.add_argument('--depth', '-dp', type=int, required=True, metavar='depth', default=15)
 
 args = parser.parse_args()
 
@@ -55,7 +57,7 @@ def main():
     # model = nn.DataParallel(model)
     model.to(dev)
     optimizer = optim.Adam(params=model.parameters(), lr=3e-4)
-    crt = utils.OneClassLoss(batch_size=args.batch_size, num_cams=9, margin=args.margin)
+    crt = utils.OneClassLoss(batch_size=args.batch_size, num_cams=9, margin=args.margin, reg=args.reg)
 
     if args.train:
         train(Net=model, optfunc=optimizer, lossfunc=crt, epochs=args.epochs, modelname=args.modelname, batch_size=args.batch_size, coordaware=args.coord)
