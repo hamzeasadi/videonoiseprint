@@ -53,7 +53,7 @@ def main():
     inch=1
     if args.coord:
         inch=3
-    model = m.VideoPrint(inch=inch, depth=15)
+    model = m.VideoPrint(inch=inch, depth=args.depth)
     # model = nn.DataParallel(model)
     model.to(dev)
     optimizer = optim.Adam(params=model.parameters(), lr=3e-4)
