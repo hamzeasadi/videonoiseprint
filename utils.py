@@ -52,6 +52,18 @@ def calc_labels(batch_size, numcams):
         labels[i:i+numframes, i:i+numframes] = 1
     return labels
 
+
+def calc_m(batch_size, numcams, m1, m2):
+    lbls = calc_labels(batch_size=batch_size, numcams=numcams)
+    for i in range(lbls.size()[0]):
+        for j in range(lbls.size()[1]):
+            if lbls[i, j] == 1:
+                lbls[i, j] = m1
+            elif lbls[i, j] == 0:
+                lbls[i, j] = m2
+
+    return lbls
+
 def calc_psd(x):
     # x = x.squeeze()
     dft = torch.fft.fft2(x)
@@ -64,13 +76,14 @@ class OneClassLoss(nn.Module):
     """
     doc
     """
-    def __init__(self, batch_size, num_cams, margin, reg) -> None:
+    def __init__(self, batch_size, num_cams, reg, m1, m2) -> None:
         super().__init__()
         self.bs = batch_size
         self.nc = num_cams
         self.reg = reg
-        distmtxdim = num_cams * (batch_size//num_cams)
-        self.m = margin*torch.ones(size=(distmtxdim, distmtxdim), device=dev, dtype=torch.float32)
+        self.m = calc_m(batch_size=batch_size, numcams=num_cams, m1=m1, m2=m2)
+        # distmtxdim = num_cams * (batch_size//num_cams)
+        # self.m = margin*torch.ones(size=(distmtxdim, distmtxdim), device=dev, dtype=torch.float32)
         self.lbls = calc_labels(batch_size=batch_size, numcams=num_cams)
         self.crt = nn.BCEWithLogitsLoss()
 
@@ -90,16 +103,40 @@ def main():
     # lbls = calc_labels(batch_size=20, numcams=5)
     # print(lbls)
     # print(lbls.device, lbls.dtype)
-    x1 = torch.ones(size=(9, 1, 3, 3))
-    x2 = torch.randn(size=(9, 1, 3, 3))
+    x1 = torch.randn(size=(9, 1, 64, 64))
+    x2 = torch.randn(size=(9, 1, 64, 64))
     x = torch.cat((x1, x2), dim=0)
-    # xs = x.squeeze()
+    xs = x.squeeze()
     # distmtx = euclidean_distance_matrix(x=xs)
+    # print(distmtx)
     # print(torch.square(distmtx))
     # print(distmtx.shape)
-    loss = OneClassLoss(batch_size=20, num_cams=9, margin=100)
-    l = loss(x.squeeze())
-    print(l)
+    # loss = OneClassLoss(batch_size=20, num_cams=9, margin=3, reg=0.0001)
+    # l = loss(x.squeeze())
+    # print(l)
+    # # distmtx = euclidean_distance_matrix(x.squeeze())
+    # # print(distmtx)
+    # x = torch.tensor([
+    #     [0, 1, 10, 10], [2, 7, 1, 9]
+    # ], dtype=torch.float32)
+    # xs = 3*torch.softmax(x, dim=1)
+    # z = 3 -xs
+    # out = torch.sigmoid(z)
+    # # xs = -torch.log_softmax(x, dim=1)
+    # print(x)
+    # print(xs)
+    # print(z)
+    # print(out)
+    # # print(-torch.log(xs))
+
+    m = 100000
+    m1 = []
+    epochs = list(range(100))
+    for epoch in epochs:
+        y = m//(1+epoch)
+        m1.append(y)
+
+    print(m1)
 
 
 if __name__ == '__main__':
