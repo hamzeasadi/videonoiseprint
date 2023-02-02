@@ -35,12 +35,12 @@ def euclidean_distance_matrix(x):
     dot_product = torch.mm(x, x.t())
     squared_norm = torch.diag(dot_product)
     distance_matrix = squared_norm.unsqueeze(0) - 2 * dot_product + squared_norm.unsqueeze(1)
-    distance_matrix = F.relu(distance_matrix)
+    distance_matrix = F.relu(distance_matrix.clone())
     distformas = distance_matrix.clone()
     mask = (distformas == 0.0).float()
-    distance_matrix += mask * eps
+    distance_matrix = distance_matrix.clone() + mask * eps
     distance_matrix = torch.sqrt(distance_matrix)
-    distance_matrix *= (1.0 - mask)
+    distance_matrix = distance_matrix.clone()*(1.0 - mask)
     return distance_matrix
 
 
