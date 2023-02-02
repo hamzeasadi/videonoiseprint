@@ -27,7 +27,7 @@ args = parser.parse_args()
 
 def train(Net:nn.Module, optfunc:Optimizer, lossfunc:nn.Module, epochs, modelname, batch_size=198, coordaware=False):
     kt = utils.KeepTrack(path=cfg.paths['model'])
-    traindata, valdata = dst.createdl()
+    # traindata, valdata = dst.createdl()
     for epoch in range(epochs):
         traindata, valdata = dst.create_loader(batch_size=batch_size, caware=coordaware)
         trainloss = engine.train_setp(net=Net, data=traindata, opt=optfunc, criterion=lossfunc)
