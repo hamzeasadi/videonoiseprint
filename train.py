@@ -33,11 +33,11 @@ args = parser.parse_args()
 
 def epochtom(epoch, M1, M2, adaptive=False):
     if adaptive:
-        m1=M1//(1+epoch)
-        m2 = M2/(1+epoch)
+        m1 = M1//(1+2*epoch) -0.3*epoch
+        m2 = M2//(1+epoch) + 0.5
         return m1, m2
     else:
-        return M1, M2
+        return 30, 3
     
 
 
@@ -53,8 +53,8 @@ def train(Net:nn.Module, optfunc:Optimizer, epochs, modelname, batch_size=198, c
         trainloss = engine.train_setp(net=Net, data=traindata, opt=optfunc, criterion=lossfunc)
         valloss = engine.val_setp(net=Net, data=valdata, opt=optfunc, criterion=lossfunc)
         fname = f'{modelname}_{epoch}.pt'
-        if epoch%2 == 0:
-            kt.save_ckp(model=Net, opt=optfunc, epoch=epoch, trainloss=trainloss, valloss=valloss, fname=fname)
+        # if epoch%2 == 0:
+        kt.save_ckp(model=Net, opt=optfunc, epoch=epoch, trainloss=trainloss, valloss=valloss, fname=fname)
 
         print(f"epoch={epoch}, trainloss={trainloss}, valloss={valloss}")
 

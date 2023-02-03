@@ -129,14 +129,19 @@ def main():
     # print(out)
     # # print(-torch.log(xs))
 
-    m = 100000
+    M1 = 10000
+    M2 = 250
     m1 = []
+    m2 = []
     epochs = list(range(100))
     for epoch in epochs:
-        y = m//(1+epoch)
+        y = M1//(1+2*epoch) -0.3*epoch
+        x = M2//(1+1*epoch) + 0.5
         m1.append(y)
+        m2.append(x)
 
     print(m1)
+    print(m2)
 
 
 if __name__ == '__main__':

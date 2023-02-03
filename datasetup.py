@@ -45,7 +45,7 @@ coordxy = coordinate(High=1080, Width=1920)
 def cropimg(img, patchid, H=64, W=64, coordinate=False):
     h, w = patchid
     crop = img[h:h+H, w:w+W, 1:2]
-    crop = ((crop - np.min(crop))/(np.max(crop) - np.min(crop) + 0.00001))
+    crop = 2*((crop - np.min(crop))/(np.max(crop) - np.min(crop) + 0.00001)) - 1
     crop = torch.from_numpy(crop).permute(2, 0, 1).float()
     if coordinate:
         coordcrop = coordxy[:, h:h+H, w:w+W]
