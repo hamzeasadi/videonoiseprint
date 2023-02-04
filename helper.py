@@ -46,7 +46,7 @@ def central_crop(imgpath, H=720, W=1280, coord=False):
     h, w, c = img.shape
     hc = h//2
     wc = w//2
-    cnt_crop = img[hc-H//2:hc+H//2, wc-W//2:w+W//2, 1:2]
+    cnt_crop = img[hc-H//2:hc+H//2, wc-W//2:wc+W//2, 1:2]
     cnt_crop = 2*((cnt_crop - np.min(cnt_crop))/(np.max(cnt_crop) - np.min(cnt_crop))) - 1
     cnt_crop = torch.from_numpy(cnt_crop).permute(2, 0, 1).float()
     if coord:
@@ -63,16 +63,16 @@ def videonp_calc(net:nn.Module, videoiframepath, numframe, cw, method='avg'):
     n = min(numframe, len(iframes))
     subiframes = random.sample(iframes, n)
     noiseprint = torch.zeros(size=(1, 720, 1280), device=dev, dtype=torch.float32)
-    print(noiseprint.shape)
+    # print(noiseprint.shape)
     net.to(dev)
     net.eval()
     with torch.no_grad():
         for iframe in subiframes:
             iframepath = os.path.join(videoiframepath, iframe)
             crop = central_crop(imgpath=iframepath, coord=cw)
-            print(crop.shape)
+            # print(crop.shape)
             vidnp = net(crop)
-            print(vidnp.shape)
+            # print(vidnp.shape)
             noiseprint += vidnp/numframe
     
     return noiseprint
