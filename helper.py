@@ -46,7 +46,7 @@ def central_crop(imgpath, H=720, W=1280, coord=False):
     h, w, c = img.shape
     hc = h//2
     wc = w//2
-    cnt_crop = img[hc-H//2:hc-H//2, wc-W//2:w+W//2, 1:2]
+    cnt_crop = img[hc-H//2:hc+H//2, wc-W//2:w+W//2, 1:2]
     cnt_crop = 2*((cnt_crop - np.min(cnt_crop))/(np.max(cnt_crop) - np.min(cnt_crop))) - 1
     cnt_crop = torch.from_numpy(cnt_crop).permute(2, 0, 1).float()
     if coord:
