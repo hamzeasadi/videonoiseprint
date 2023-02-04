@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch import nn as nn
 from torch.nn import functional as F
-
+import model as m
 
 
 dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -50,8 +50,9 @@ def central_crop(imgpath, H=720, W=1280, coord=False):
     cnt_crop = 2*((cnt_crop - np.min(cnt_crop))/(np.max(cnt_crop) - np.min(cnt_crop))) - 1
     cnt_crop = torch.from_numpy(cnt_crop).permute(2, 0, 1).float()
     if coord:
-        coordxy = coordinate(High=H, Width=W)
-        cnt_crop = torch.cat((cnt_crop, coordxy), dim=0)
+        coordxy = coordinate(High=1080, Width=1920)
+        coords = coordxy[:, 1080//2 - H//2:1080//2 + H//2, 1920//2 - W//2:1920//2 + W//2]
+        cnt_crop = torch.cat((cnt_crop, coords), dim=0)
     
     return cnt_crop.unsqueeze(dim=0)
 
@@ -125,12 +126,22 @@ def save_all_ref(Net:nn.Module, data_path:str, iframepervideo, numvideos, method
         save_np(noiseprint=refnoise, numiframe=numvideos*iframepervideo, camid=cam, videoid='ref', trgpath=cfg.paths['refs'])
 
 def cam_noiseprint(net:nn.Module, campath, framepervideo, coordaware, method):
+    camname = campath.split('/')[-1].strip()
     camvideosiframe = os.listdir(campath)
     camvideosiframe = cfg.rm_ds(camvideosiframe)
     for videoiframe in camvideosiframe:
         videoiframepath = os.path.join(campath, videoiframe)
         videonp = videonp_calc(net=net, videoiframepath=videoiframepath, numframe=framepervideo, cw=coordaware, method=method)
+        savepath = os.path.join(cfg.paths['np'], camname, f'{videoiframe}_{framepervideo}.npy')
+        np.save(savepath, videonp.numpy())
 
+def all_cams_noisprint(net:nn.Module, camspaths, framepervideo, coordaware, method):
+    cams = os.listdir(camspaths)
+    cams = cfg.rm_ds(cams)
+    for cam in cams:
+        campath = os.path.join(camspaths, cam)
+        cam_noiseprint(net=net, campath=campath, framepervideo=framepervideo, coordaware=coordaware, method=method)
+    
 
 
     
@@ -141,13 +152,22 @@ def cam_noiseprint(net:nn.Module, campath, framepervideo, coordaware, method):
 
 
 def main():
-    sracpath = cfg.paths['camsvideos']
-    trgpath = cfg.paths['camsiframes']
-    iframe_extract(srcdatapath=sracpath, trgdatapath=trgpath)
-    # x = torch.randn(size=(1, 100, 100))
-    # y = torch.randn(size=(1, 100, 100))
-    # mse = meanse(x, y)
-    # print(mse)
+    # srcpath = cfg.paths['camsvideos']
+    # trgpath = cfg.paths['camsiframes']
+    # # iframe_extract(srcdatapath=srcpath, trgdatapath=trgpath)
+
+
+    inch=1
+    coord = False
+    if coord:
+        inch=3
+    model = m.VideoPrint(inch=inch, depth=15)
+    state = torch.load(cfg.paths['model1'], map_location=dev)
+    model.load_state_dict(state['model'])
+    camerapaths = cfg.paths['camsiframes']
+    framepervideo = 10
+    all_cams_noisprint(net=model, camspaths=camerapaths, framepervideo=framepervideo, coordaware=coord, method='avg')
+
 
 if __name__ == '__main__':
     main()
