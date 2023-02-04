@@ -20,7 +20,7 @@ def ncc_cams(srcnps, refnps):
     listofrefcamsnps = os.listdir(refnps)
     listofrefcamsnps = cfg.rm_ds(listofrefcamsnps)
     all_ncc = dict()
-    all_mse = ()
+    all_mse = dict()
     for refnpcam in listofrefcamsnps:
         refsigpath = os.path.join(refnps, refnpcam)
         refsig = np.load(refsigpath)
@@ -58,7 +58,9 @@ def main():
     srcnps = cfg.paths['np']
     refnps = cfg.paths['refs']
     allncc, allmse = ncc_cams(srcnps=srcnps, refnps=refnps)
-
+    print(allncc)
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    print(allmse)
 
 if __name__ == "__main__":
     main()
