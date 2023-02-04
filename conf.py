@@ -5,8 +5,12 @@ import random
 root = os.getcwd()
 data = os.path.join(root, 'data')
 paths = dict(
-    root=root, data=data, model=os.path.join(data, 'model'),
-    train=os.path.join(data, 'iframes', 'train'), val=os.path.join(data, 'iframes', 'val') 
+    root=root, data=data, model=os.path.join(data, 'model'), 
+    train=os.path.join(data, 'iframes', 'train'), val=os.path.join(data, 'iframes', 'val'), 
+    testing=os.path.join(data, 'testing'), 
+    cams=os.path.join(data, 'testing', 'cams'), refs=os.path.join(data, 'testing', 'refs'), 
+    np=os.path.join(data, 'testing', 'np'), model1=os.path.join(data, 'testing', 'model1'), model2=os.path.join(data, 'testing', 'model2'),
+    model1out=os.path.join(data, 'testing', 'model1out'), model2out=os.path.join(data, 'testing', 'model2out')
     )
 
 def rm_ds(array):
@@ -17,9 +21,17 @@ def rm_ds(array):
     return array
 
 
+def createdir(path):
+    try:
+        os.makedirs(path)
+    except Exception as e:
+        print(e)
+
+
 
 def main():
-    pass
+    for k, v in paths.items():
+        createdir(path=v)
 
 
 

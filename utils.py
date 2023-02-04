@@ -4,6 +4,8 @@ import torch
 from torch import nn as nn
 from torch.optim import Optimizer
 from torch.nn import functional as F
+import numpy as np
+
 
 
 dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -98,7 +100,6 @@ class OneClassLoss(nn.Module):
 
 
 
-
 def main():
     # lbls = calc_labels(batch_size=20, numcams=5)
     # print(lbls)
@@ -129,19 +130,21 @@ def main():
     # print(out)
     # # print(-torch.log(xs))
 
-    M1 = 10000
-    M2 = 250
+    M1 = 15000
+    M2 = 300
     m1 = []
     m2 = []
-    epochs = list(range(100))
+    epochs = list(range(120))
     for epoch in epochs:
-        y = M1//(1+2*epoch) -0.3*epoch
-        x = M2//(1+1*epoch) + 0.5
+        y = int(max((M1//(1+2*epoch) -0.8*epoch), 10))
+        x = max(M2//(1+1*epoch)+1, 3)
         m1.append(y)
         m2.append(x)
 
     print(m1)
     print(m2)
+    print(sum(np.array(m1)<11))
+    print(sum(np.array(m2)<4))
 
 
 if __name__ == '__main__':

@@ -33,11 +33,11 @@ args = parser.parse_args()
 
 def epochtom(epoch, M1, M2, adaptive=False):
     if adaptive:
-        m1 = M1//(1+2*epoch) -0.3*epoch
-        m2 = M2//(1+epoch) + 0.5
+        m1 = int(max((M1//(1+2*epoch) -0.8*epoch), 10))
+        m2 = max(M2//(1+1*epoch)+1, 3)
         return m1, m2
     else:
-        return 30, 3
+        return 10, 3
     
 
 
@@ -72,7 +72,7 @@ def main():
     if args.coord:
         inch=3
     model = m.VideoPrint(inch=inch, depth=args.depth)
-    # model = nn.DataParallel(model)
+    model = nn.DataParallel(model)
     model.to(dev)
     optimizer = optim.Adam(params=model.parameters(), lr=3e-4)
     # crt = utils.OneClassLoss(batch_size=args.batch_size, num_cams=9, margin=args.margin, reg=args.reg)
