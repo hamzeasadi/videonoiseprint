@@ -20,7 +20,7 @@ def iframe_extract(srcdatapath, trgdatapath):
         listofcamvidoes = cfg.rm_ds(listofcamvidoes)
         cam10subvideos = random.sample(listofcamvidoes, 10)
         for j, camvideo in enumerate(cam10subvideos):
-            trgvideopath = os.path.join(trgvideopath, cam, f'video_{j}')
+            trgvideopath = os.path.join(trgdatapath, cam, f'video_{j}')
             cfg.createdir(trgvideopath)
             videopath = os.path.join(campath, camvideo)
             command = f"ffmpeg -skip_frame nokey -i {videopath} -vsync vfr -frame_pts true -x264opts no-deblock {trgvideopath}/iframe%d.bmp" 
@@ -130,7 +130,7 @@ def cam_noiseprint(net:nn.Module, campath, framepervideo, coordaware, method):
     for videoiframe in camvideosiframe:
         videoiframepath = os.path.join(campath, videoiframe)
         videonp = videonp_calc(net=net, videoiframepath=videoiframepath, numframe=framepervideo, cw=coordaware, method=method)
-        
+
 
 
     
@@ -141,13 +141,13 @@ def cam_noiseprint(net:nn.Module, campath, framepervideo, coordaware, method):
 
 
 def main():
-    # sracpath = cfg.paths['testvideos']
-    # trgpath = cfg.paths['testiframes']
-    # iframe_extract(srcdatapath=sracpath, trgdatapath=trgpath)
-    x = torch.randn(size=(1, 100, 100))
-    y = torch.randn(size=(1, 100, 100))
-    mse = meanse(x, y)
-    print(mse)
+    sracpath = cfg.paths['camsvideos']
+    trgpath = cfg.paths['camsiframes']
+    iframe_extract(srcdatapath=sracpath, trgdatapath=trgpath)
+    # x = torch.randn(size=(1, 100, 100))
+    # y = torch.randn(size=(1, 100, 100))
+    # mse = meanse(x, y)
+    # print(mse)
 
 if __name__ == '__main__':
     main()
