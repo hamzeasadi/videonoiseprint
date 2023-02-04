@@ -18,8 +18,8 @@ def iframe_extract(srcdatapath, trgdatapath):
         campath = os.path.join(srcdatapath, cam)
         listofcamvidoes = os.listdir(campath)
         listofcamvidoes = cfg.rm_ds(listofcamvidoes)
-        cam10subvideos = random.sample(listofcamvidoes, 10)
-        for j, camvideo in enumerate(cam10subvideos):
+        # cam10subvideos = random.sample(listofcamvidoes, 10)
+        for j, camvideo in enumerate(listofcamvidoes):
             trgvideopath = os.path.join(trgdatapath, cam, f'video_{j}')
             cfg.createdir(trgvideopath)
             videopath = os.path.join(campath, camvideo)
