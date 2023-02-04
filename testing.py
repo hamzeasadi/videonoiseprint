@@ -22,8 +22,9 @@ def ncc_cams(srcnps, refnps):
     all_ncc = dict()
     all_mse = dict()
     for refnpcam in listofrefcamsnps:
-        refsigname = os.listdir(os.path.join(refnps, refnpcam))
-        refsigpath = os.path.join(refnps, refnpcam, refsigname)
+        refnpcappath = os.path.join(refnps, refnpcam)
+        refsigname = os.listdir(refnpcappath)[0]
+        refsigpath = os.path.join(refnpcappath, refsigname)
         
         refsig = np.load(refsigpath)
 
