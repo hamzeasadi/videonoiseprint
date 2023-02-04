@@ -132,14 +132,15 @@ def cam_noiseprint(net:nn.Module, campath, framepervideo, coordaware, method):
     camname = campath.split('/')[-1].strip()
     camvideosiframe = os.listdir(campath)
     camvideosiframe = cfg.rm_ds(camvideosiframe)
-    for videoiframe in camvideosiframe:
+    subcamvideos = random.sample(camvideosiframe, 10)
+    for videoiframe in subcamvideos:
         videoiframepath = os.path.join(campath, videoiframe)
         videonp = videonp_calc(net=net, videoiframepath=videoiframepath, numframe=framepervideo, cw=coordaware, method=method)
         savepath = os.path.join(cfg.paths['np'], camname)
         cfg.createdir(savepath)
-        print(1)
+        # print(1)
         np.save(os.path.join(savepath, f'{videoiframe}_{framepervideo}.npy'), videonp.numpy())
-        print(2)
+        # print(2)
 
 def all_cams_noisprint(net:nn.Module, camspaths, framepervideo, coordaware, method):
     cams = os.listdir(camspaths)
