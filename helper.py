@@ -63,13 +63,16 @@ def videonp_calc(net:nn.Module, videoiframepath, numframe, cw, method='avg'):
     n = min(numframe, len(iframes))
     subiframes = random.sample(iframes, n)
     noiseprint = torch.zeros(size=(1, 720, 1280), device=dev, dtype=torch.float32)
+    print(noiseprint.shape)
     net.to(dev)
     net.eval()
     with torch.no_grad():
         for iframe in subiframes:
             iframepath = os.path.join(videoiframepath, iframe)
             crop = central_crop(imgpath=iframepath, coord=cw)
+            print(crop.shape)
             vidnp = net(crop)
+            print(vidnp.shape)
             noiseprint += vidnp/numframe
     
     return noiseprint
