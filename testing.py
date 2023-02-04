@@ -33,8 +33,8 @@ def ncc_cams(srcnps, refnps):
             for trgsignal in trgsignals:
                 trgsignalpath = os.path.join(trgcampath, trgsignal)
                 trgsig = np.load(trgsignalpath)
-                nccs.append(hp.NCC(refnp=refsig, testnp=trgsig))
-                mses.append(hp.meanse(refnp=refsig, testnp=trgsig))
+                nccs.append(hp.NCC(refnp=torch.from_numpy(refsig), testnp=torch.from_numpy(trgsig)))
+                mses.append(hp.meanse(refnp=torch.from_numpy(refsig), testnp=torch.from_numpy(trgsig)))
             all_ncc[(refnpcam, trgcam)] = nccs
             all_mse[(refnpcam, trgcam)] = mses
 
