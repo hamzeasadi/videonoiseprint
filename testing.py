@@ -16,13 +16,15 @@ def ncc_cams(srcnps, refnps):
     # srcnps refere to nps for all cameras, trgnps referes to reference nps for each camera
     trgcams = os.listdir(srcnps)
     trgcams = cfg.rm_ds(trgcams)
-
+    print(trgcams)
     listofrefcamsnps = os.listdir(refnps)
     listofrefcamsnps = cfg.rm_ds(listofrefcamsnps)
     all_ncc = dict()
     all_mse = dict()
     for refnpcam in listofrefcamsnps:
-        refsigpath = os.path.join(refnps, refnpcam)
+        refsigname = os.listdir(os.path.join(refnps, refnpcam))
+        refsigpath = os.path.join(refnps, refnpcam, refsigname)
+        
         refsig = np.load(refsigpath)
 
         for trgcam in trgcams:
