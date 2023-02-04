@@ -41,7 +41,7 @@ def ncc_cams(srcnps, refnps):
             all_ncc[(refnpcam, trgcam)] = nccs
             all_mse[(refnpcam, trgcam)] = mses
 
-    return all_ncc, all_ncc
+    return all_ncc, all_mse
 
 
 
