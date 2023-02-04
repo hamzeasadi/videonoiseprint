@@ -134,7 +134,7 @@ def main():
     M2 = 300
     m1 = []
     m2 = []
-    epochs = list(range(120))
+    epochs = list(range(150))
     for epoch in epochs:
         y = int(max((M1//(1+2*epoch) -0.8*epoch), 10))
         x = max(M2//(1+1*epoch)+1, 3)
