@@ -162,7 +162,8 @@ def main():
     if coord:
         inch=3
     model = m.VideoPrint(inch=inch, depth=15)
-    state = torch.load(cfg.paths['model1'], map_location=dev)
+    models = os.listdir(cfg.paths['model1'])
+    state = torch.load(os.path.join(cfg.paths['model1'], models[0]), map_location=dev)
     model.load_state_dict(state['model'])
     camerapaths = cfg.paths['camsiframes']
     framepervideo = 10
