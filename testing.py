@@ -12,6 +12,35 @@ import helper as hp
 
 
 
+def ncc_cams(srcnps, refnps):
+    # srcnps refere to nps for all cameras, trgnps referes to reference nps for each camera
+    trgcams = os.listdir(srcnps)
+    trgcams = cfg.rm_ds(trgcams)
+
+    listofrefcamsnps = os.listdir(refnps)
+    listofrefcamsnps = cfg.rm_ds(listofrefcamsnps)
+    all_ncc = dict()
+    all_mse = ()
+    for refnpcam in listofrefcamsnps:
+        refsigpath = os.path.join(refnps, refnpcam)
+        refsig = np.load(refsigpath)
+
+        for trgcam in trgcams:
+            trgcampath = os.path.join(srcnps, trgcam)
+            trgsignals = os.listdir(trgcampath)
+            nccs = []
+            mses = []
+            for trgsignal in trgsignals:
+                trgsignalpath = os.path.join(trgcampath, trgsignal)
+                trgsig = np.load(trgsignalpath)
+                nccs.append(hp.NCC(refnp=refsig, testnp=trgsig))
+                mses.append(hp.meanse(refnp=refsig, testnp=trgsig))
+            all_ncc[(refnpcam, trgcam)] = nccs
+            all_mse[(refnpcam, trgcam)] = mses
+
+    return all_ncc, all_ncc
+
+
 
 
 
@@ -25,12 +54,10 @@ import helper as hp
 
 def main():
     x = np.array([1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0])
-    y = np.random.randint(low=0, high=2, size=x.shape[0])
-    tpr, fpr, thresholds = roc_curve(x, y)
-    print(tpr)
-    print(fpr)
-    print(thresholds)
-
+    
+    srcnps = cfg.paths['np']
+    refnps = cfg.paths['refs']
+    allncc, allmse = ncc_cams(srcnps=srcnps, refnps=refnps)
 
 
 if __name__ == "__main__":

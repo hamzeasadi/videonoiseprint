@@ -174,7 +174,11 @@ def main():
     model.load_state_dict(state['model'])
     camerapaths = cfg.paths['camsiframes']
     framepervideo = 10
-    all_cams_noisprint(net=model, camspaths=camerapaths, framepervideo=framepervideo, coordaware=coord, method='avg')
+
+    # all_cams_noisprint(net=model, camspaths=camerapaths, framepervideo=framepervideo, coordaware=coord, method='avg')
+
+
+    save_all_ref(Net=model, data_path=cfg.paths['camsiframes'], iframepervideo=10, numvideos=10, method='avg', cw=False)
 
 
 if __name__ == '__main__':
