@@ -130,21 +130,21 @@ def main():
     # print(out)
     # # print(-torch.log(xs))
 
-    M1 = 15000
-    M2 = 300
+    M1 = 20000
+    M2 = 600
     m1 = []
     m2 = []
     epochs = list(range(150))
     for epoch in epochs:
-        y = int(max((M1//(1+2*epoch) -0.8*epoch), 10))
-        x = max(M2//(1+1*epoch)+1, 3)
+        y = int(max((M1//(1+2*epoch) -0.8*epoch), 18))
+        x = max(M2//(1+1*epoch)+1, 6)
         m1.append(y)
         m2.append(x)
 
     print(m1)
     print(m2)
-    print(sum(np.array(m1)<11))
-    print(sum(np.array(m2)<4))
+    print(sum(np.array(m1)<19))
+    print(sum(np.array(m2)<7))
 
 
 if __name__ == '__main__':

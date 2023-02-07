@@ -11,7 +11,7 @@ import numpy as np
 
 dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-def datatemp(H=64, W=64, href=1080, wref=1920):
+def datatemp(H=64, W=64, href=720, wref=1280):
     hstart = (href%64)//2
     wstart = 0
     numh = href//64
@@ -69,6 +69,46 @@ def getpatch(folderpath, patchid, numframes, coord=False):
     return Crops
 
 
+def datasetitems(datasetpath:str):
+    cam2img = dict()
+    camsnames = os.listdir(datasetpath)
+    camsnames = cfg.rm_ds(camsnames)
+    for camname in camsnames:
+        campath = os.path.join(datasetpath, camname)
+        iframeslist = os.listdir(campath)
+        iframeslist = cfg.rm_ds(iframeslist)
+        cam2img[camname] = [os.path.join(campath, iframe) for iframe in iframeslist]
+    
+    return cam2img
+
+
+
+# class VideoNoiseDataset(Dataset):
+#     """
+#     doc
+#     """
+#     def __init__(self, datapath, batch_size, coordaware=False) -> None:
+#         super().__init__()
+#         self.bs = batch_size
+#         self.cw = coordaware
+#         self.path = datapath
+#         self.batchids = datatemp()
+#         keylist = list(self.batchids.keys())
+#         self.bidkeys = random.sample(keylist, len(keylist))
+#         folderspath = [os.path.join(datapath, foldername) for foldername in cfg.rm_ds(os.listdir(datapath))]
+#         self.folders = random.sample(folderspath, len(folderspath))
+#         self.imgpercam = batch_size//len(folderspath)
+
+#     def __len__(self):
+#         return len(self.bidkeys)
+
+#     def __getitem__(self, index):
+#         patches = getpatch(folderpath=self.folders[0], patchid=self.batchids[self.bidkeys[index]], numframes=self.imgpercam, coord=self.cw)
+#         for f in range(1, len(self.folders)):
+#             patch = getpatch(folderpath=self.folders[f], patchid=self.batchids[self.bidkeys[index]], numframes=self.imgpercam, coord=self.cw)
+#             patches = torch.cat((patches, patch), dim=0)
+
+#         return patches.to(dev)
 
 
 class VideoNoiseDataset(Dataset):
@@ -77,26 +117,35 @@ class VideoNoiseDataset(Dataset):
     """
     def __init__(self, datapath, batch_size, coordaware=False) -> None:
         super().__init__()
-        self.bs = batch_size
         self.cw = coordaware
         self.path = datapath
-        self.batchids = datatemp()
-        keylist = list(self.batchids.keys())
-        self.bidkeys = random.sample(keylist, len(keylist))
-        folderspath = [os.path.join(datapath, foldername) for foldername in cfg.rm_ds(os.listdir(datapath))]
-        self.folders = random.sample(folderspath, len(folderspath))
-        self.imgpercam = batch_size//len(folderspath)
+        self.bs = batch_size
+        self.patchs = datatemp()
+        self.patchids = list(self.patchs.keys())
+        # cam path based on data path 
+        self.cam2img = datasetitems(datasetpath=datapath)
+        self.imgpercam = batch_size//len(len(list(self.cam2img.keys())))
+
+    def getbatch(self, idx):
+        patchid = self.patchids[idx]
+        
 
     def __len__(self):
-        return len(self.bidkeys)
+        return 220
+
 
     def __getitem__(self, index):
+        patchid = self.patchids[index]
+        imgid = self.imgids[index*5%500:(index+1)*5%500]
+
         patches = getpatch(folderpath=self.folders[0], patchid=self.batchids[self.bidkeys[index]], numframes=self.imgpercam, coord=self.cw)
         for f in range(1, len(self.folders)):
             patch = getpatch(folderpath=self.folders[f], patchid=self.batchids[self.bidkeys[index]], numframes=self.imgpercam, coord=self.cw)
             patches = torch.cat((patches, patch), dim=0)
 
         return patches.to(dev)
+
+
 
 def create_loader(batch_size=198, caware=False):
     traindata = VideoNoiseDataset(datapath=cfg.paths['train'], batch_size=batch_size, coordaware=caware)
@@ -106,12 +155,12 @@ def create_loader(batch_size=198, caware=False):
 
 def main():
     dpath = cfg.paths['train']
-    dataset = VideoNoiseDataset(datapath=dpath, batch_size=20, coordaware=True)
-    batch = dataset[0]
-    print(batch.shape)
-
-
-
+    # dataset = VideoNoiseDataset(datapath=dpath, batch_size=20, coordaware=True)
+    # batch = dataset[0]
+    # print(batch.shape)
+    tmp = datatemp()
+    cm2img = datasetitems(datasetpath=dpath)
+    print(cm2img)
 if __name__ == '__main__':
     main()
 
