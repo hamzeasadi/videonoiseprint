@@ -109,13 +109,13 @@ def main():
     # print(lbls.device, lbls.dtype)
 
     epochs = 100
-    M1 = 500
-    M2 = 1000
+    M1 = 1000
+    M2 = 10000
     m1 = []
     m2 = []
     for i in range(epochs):
-        m1.append(M1//(1+i))
-        m2.append(M2//(1+i))
+        m1.append(M1//(1+2*i))
+        m2.append(M2//(1+5*i))
     print(m1)
     print(m2)
     # m = calc_m(batch_size=100, numcams=40, m1=10, m2=100)

@@ -30,13 +30,10 @@ parser.add_argument('--depth', '-dp', type=int, required=True, metavar='depth', 
 
 args = parser.parse_args()
 
-mm1 = [500, 250, 120, 60, 40, 30, 20, 10, 5]
-mm2 = [1000, 500, 250, 120, 60, 40, 30, 20, 10]
-
 def epochtom(epoch, M1, M2, adaptive=False):
     if adaptive:
-        m1 = M1//(epoch+1)
-        m2 = M2//(epoch+1)
+        m1 = M1//(2*epoch+1)
+        m2 = M2//(4*epoch+1)
         return m1, m2
     else:
         return 5, 10
