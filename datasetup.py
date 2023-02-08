@@ -91,8 +91,11 @@ def main():
     dpath = cfg.paths['val']
     # pp = '/Users/hamzeasadi/python/videonoiseprint/data/asqar'
     # r = datasetemp(datapath=pp, camframeperepoch=2)
-    data = VideoNoiseDataset(datapath=dpath, batch_size=200, numcams=5)
-    print(data[0].shape, data[0].device, data[0].dtype)
+    # data = VideoNoiseDataset(datapath=dpath, batch_size=200, numcams=5)
+    # print(data[0].shape, data[0].device, data[0].dtype)
+    trainl, vall = create_loader(batch_size=200)
+    batch = next(iter(trainl))
+    print(batch.shape, batch.squeeze(dim=0).shape)
     
 
 
