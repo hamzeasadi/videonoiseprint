@@ -24,7 +24,7 @@ def coordinate(High, Width):
 
 coordxy = coordinate(High=720, Width=1280).permute(1, 2, 0).numpy()
 coordpatchs = patchify(coordxy, (64,64, 2), step=64)
-coordxy = torch.from_numpy(coordpatchs).permute(0,1,2,5,3,4).to(dev)
+coordxy = torch.from_numpy(coordpatchs).permute(0,1,2,5,3,4)
 
 
 
