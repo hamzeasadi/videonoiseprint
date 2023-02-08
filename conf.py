@@ -10,11 +10,7 @@ paths = dict(
     root=root, data=data, model=os.path.join(data, 'model'), 
     dataset=os.path.join(home, 'project', 'Datasets'),
     train=os.path.join(data, 'iframes', 'train'), val=os.path.join(data, 'iframes', 'val'), 
-    testing=os.path.join(data, 'testing'), 
-    cams=os.path.join(data, 'testing', 'cams'), refs=os.path.join(data, 'testing', 'refs'), 
-    camsvideos=os.path.join(data, 'testing', 'cams', 'videos'), camsiframes=os.path.join(data, 'testing', 'cams', 'iframes'),
-    np=os.path.join(data, 'testing', 'np'), model1=os.path.join(data, 'testing', 'model1'), model2=os.path.join(data, 'testing', 'model2'),
-    model1out=os.path.join(data, 'testing', 'model1out'), model2out=os.path.join(data, 'testing', 'model2out')
+    
     )
 
 def rm_ds(array):
