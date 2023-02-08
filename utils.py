@@ -96,7 +96,7 @@ class OneClassLoss(nn.Module):
         logits = self.m - torch.square(distmatrix)
         l1 = self.crt(logits, self.lbls)
         l2 = calc_psd(x=Xs)
-        return 0.5*l1 - self.reg*l2
+        return l1 - self.reg*l2
 
 
 

@@ -73,20 +73,27 @@ class VideoNoiseDataset(Dataset):
             hi, wi = int(hi), int(wi)
             patchcoord = coordxy[hi, wi, 0]
             patchspaths = self.patchs[patchid]
-            # img0 = cv2.imread(patchspaths[0])
-            patch0 = torch.from_numpy(cv2.imread(patchspaths[0])/255.0).permute(2, 0, 1)[1:2, :, :]
+            img0 = cv2.imread(patchspaths[0])
+            img0 = 2*((img0 - np.min(img0))/(np.max(img0) - np.min(img0))) -1 
+            patch0 = torch.from_numpy(img0).permute(2, 0, 1)[1:2, :, :]
             Patchcoord = torch.cat((patch0, patchcoord), dim=0).unsqueeze(dim=0)
             for i in range(1, len(patchspaths)):
-                patchi = torch.from_numpy(cv2.imread(patchspaths[i])/255.0).permute(2, 0, 1)[1:2, :, :]
+                img0 = cv2.imread(patchspaths[i])
+                img0 = 2*((img0 - np.min(img0))/(np.max(img0) - np.min(img0))) -1 
+                patchi = torch.from_numpy(img0).permute(2, 0, 1)[1:2, :, :]
                 patchi = torch.cat((patchi, patchcoord), dim=0).unsqueeze(dim=0)
                 Patchcoord = torch.cat((Patchcoord, patchi), dim=0)
 
         else:
             patchspaths = self.patchs[patchid]
-            Patchcoord = torch.from_numpy(cv2.imread(patchspaths[0])/255.0).permute(2, 0, 1)[1:2, :, :]
+            img0 = cv2.imread(patchspaths[0])
+            img0 = 2*((img0 - np.min(img0))/(np.max(img0) - np.min(img0))) -1 
+            Patchcoord = torch.from_numpy(img0).permute(2, 0, 1)[1:2, :, :]
             Patchcoord = Patchcoord.unsqueeze(dim=0) 
             for i in range(1, len(patchspaths)):
-                patchi = torch.from_numpy(cv2.imread(patchspaths[i])/255.0).permute(2, 0, 1)[1:2, :, :]
+                img0 = cv2.imread(patchspaths[i])
+                img0 = 2*((img0 - np.min(img0))/(np.max(img0) - np.min(img0))) -1 
+                patchi = torch.from_numpy(img0).permute(2, 0, 1)[1:2, :, :]
                 Patchcoord = torch.cat((Patchcoord, patchi.unsqueeze(dim=0)), dim=0)
 
         return Patchcoord
