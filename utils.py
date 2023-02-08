@@ -1,5 +1,5 @@
 
-import os, random
+import os, random, sys
 import torch
 from torch import nn as nn
 from torch.optim import Optimizer
@@ -102,19 +102,20 @@ class OneClassLoss(nn.Module):
 
 def main():
     print(42)
-    # lbls = calc_labels(batch_size=200, numcams=5)
-    # print(lbls)
-    # print(lbls.shape)
+    lbls = calc_labels(batch_size=200, numcams=40)
+    np.set_printoptions(threshold=sys.maxsize)
+    print(lbls.numpy())
+    print(lbls.shape)
     # print(lbls.device, lbls.dtype)
 
-    epochs = 100
-    m1 = [1000, 500, 250, 120, 60, 40, 30, 20, 10]
-    m2 = [500, 250, 120, 60, 40, 30, 20, 10, 5]
+    # epochs = 100
+    # m1 = [1000, 500, 250, 120, 60, 40, 30, 20, 10]
+    # m2 = [500, 250, 120, 60, 40, 30, 20, 10, 5]
 
-    for i in range(epochs):
-        print(m1[i//10])
-        print(m2[i//10])
-        
+    # for i in range(epochs):
+    #     print(m1[i//10])
+    #     print(m2[i//10])
+
     
  
 

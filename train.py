@@ -43,7 +43,7 @@ def epochtom(epoch, M1, M2, adaptive=False):
 
 
 
-def train(Net:nn.Module, optfunc:Optimizer, epochs, modelname, batch_size=198, coordaware=False):
+def train(Net:nn.Module, optfunc:Optimizer, epochs, modelname, batch_size=200, coordaware=False):
     kt = utils.KeepTrack(path=cfg.paths['model'])
     # traindata, valdata = dst.createdl()
     for epoch in range(epochs):
