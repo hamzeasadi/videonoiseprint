@@ -31,7 +31,7 @@ coordxy = coordinate(High=1080, Width=1920)
 
 def datasetemp(datapath, camframeperepoch):
     listofcam = cfg.rm_ds(os.listdir(datapath))
-    patches = [f'patch{i}_{j}' for i in range(11) for j in range(20)]
+    patches = [f'patch_{i}_{j}' for i in range(11) for j in range(20)]
     temp = dict()
     for patch in patches:
         camtemp = []
