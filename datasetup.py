@@ -92,7 +92,7 @@ class VideoNoiseDataset(Dataset):
 
     def __getitem__(self, index):
         X = self.getpatch(index)
-        return X.to(dev)
+        return X.float().to(dev)
 
 
 
