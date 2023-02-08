@@ -30,15 +30,16 @@ parser.add_argument('--depth', '-dp', type=int, required=True, metavar='depth', 
 
 args = parser.parse_args()
 
-mm1 = [1000, 500, 250, 120, 60, 40, 30, 20, 10]
-mm2 = [500, 250, 120, 60, 40, 30, 20, 10, 5]
+mm1 = [500, 250, 120, 60, 40, 30, 20, 10, 5]
+mm2 = [1000, 500, 250, 120, 60, 40, 30, 20, 10]
+
 def epochtom(epoch, M1, M2, adaptive=False):
     if adaptive:
         m1 = mm1[epoch//10]
         m2 = mm2[epoch//10]
         return m1, m2
     else:
-        return 10, 5
+        return 5, 10
     
 
 
@@ -48,11 +49,12 @@ def train(Net:nn.Module, optfunc:Optimizer, epochs, modelname, batch_size=200, c
     # traindata, valdata = dst.createdl()
     for epoch in range(epochs):
         m1, m2 = epochtom(epoch=epoch, M1=args.margin1, M2=args.margin2, adaptive=args.adaptive)
-        lossfunc = utils.OneClassLoss(batch_size=args.batch_size, num_cams=40, reg=args.reg, m1=m1, m2=m2)
+        lossfunctr = utils.OneClassLoss(batch_size=args.batch_size, num_cams=40, reg=args.reg, m1=m1, m2=m2)
+        lossfuncvl = utils.OneClassLoss(batch_size=args.batch_size, num_cams=5, reg=args.reg, m1=m1, m2=m2)
 
         traindata, valdata = dst.create_loader(batch_size=batch_size, caware=coordaware)
-        trainloss = engine.train_setp(net=Net, data=traindata, opt=optfunc, criterion=lossfunc)
-        valloss = engine.val_setp(net=Net, data=valdata, opt=optfunc, criterion=lossfunc)
+        trainloss = engine.train_setp(net=Net, data=traindata, opt=optfunc, criterion=lossfunctr)
+        valloss = engine.val_setp(net=Net, data=valdata, opt=optfunc, criterion=lossfuncvl)
         fname = f'{modelname}_{epoch}.pt'
         # if epoch%2 == 0:
         kt.save_ckp(model=Net, opt=optfunc, epoch=epoch, trainloss=trainloss, valloss=valloss, fname=fname)

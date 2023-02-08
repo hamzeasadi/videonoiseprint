@@ -4,15 +4,12 @@ from torch.utils.data import Dataset, DataLoader
 import os, random
 import cv2
 import numpy as np
-
+from patchify import patchify
 
 
 
 
 dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-
-
 
 def coordinate(High, Width):
     xcoord = torch.ones(size=(High, Width), dtype=torch.float32)
@@ -25,7 +22,9 @@ def coordinate(High, Width):
     coord = torch.cat((xcoord.unsqueeze(dim=0), ycoord.unsqueeze(dim=0)), dim=0)
     return coord
 
-coordxy = coordinate(High=1080, Width=1920)
+coordxy = coordinate(High=720, Width=1280).permute(1, 2, 0).numpy()
+coordpatchs = patchify(coordxy, (64,64, 2), step=64)
+coordxy = torch.from_numpy(coordpatchs).permute(0,1,2,5,3,4).to(dev)
 
 
 
@@ -66,17 +65,34 @@ class VideoNoiseDataset(Dataset):
     def __len__(self):
         return len(self.patchkeys)
 
+    def getpatch(self, idx):
+        patchid = self.patchkeys[idx]
+        if self.cw:
+            _, hi, wi = patchid.strip
+            hi, wi = int(hi), int(wi)
+            patchcoord = coordxy[hi, wi, 0]
+            patchspaths = self.patchs[patchid]
+            patch0 = torch.from_numpy(cv2.imread(patchspaths[0])).permute(2, 0, 1)[1:2, :, :]
+            Patchcoord = torch.cat((patch0, patchcoord), dim=0).unsqueeze(dim=0)
+            for i in range(1, len(patchspaths)):
+                patchi = torch.from_numpy(cv2.imread(patchspaths[i])).permute(2, 0, 1)[1:2, :, :]
+                patchi = torch.cat((patchi, patchcoord), dim=0).unsqueeze(dim=0)
+                Patchcoord = torch.cat((Patchcoord, patchi), dim=0)
+
+        else:
+            patchspaths = self.patchs[patchid]
+            Patchcoord = torch.from_numpy(cv2.imread(patchspaths[0])).permute(2, 0, 1)[1:2, :, :]
+            Patchcoord = Patchcoord.unsqueeze(dim=0) 
+            for i in range(1, len(patchspaths)):
+                patchi = torch.from_numpy(cv2.imread(patchspaths[i])).permute(2, 0, 1)[1:2, :, :]
+                Patchcoord = torch.cat((Patchcoord, patchi.unsqueeze(dim=0)), dim=0)
+
+        return Patchcoord
+
 
     def __getitem__(self, index):
-        patchid = self.patchkeys[index]
-        patchepaths = self.patchs[patchid]
-        Patchs = torch.from_numpy(cv2.imread(patchepaths[0])/255.0).permute(2, 0, 1)[1:2, :, :].unsqueeze(dim=0)
-
-        for i in range(1, len(patchepaths)):
-            patch = torch.from_numpy(cv2.imread(patchepaths[i])/255.0).permute(2, 0, 1)[1:2, :, :]
-            Patchs = torch.cat((Patchs, patch.unsqueeze(dim=0)), dim=0)
-
-        return Patchs.float().to(dev)
+        X = self.getpatch(index)
+        return X.to(dev)
 
 
 
@@ -89,13 +105,8 @@ def create_loader(batch_size=200, caware=False):
 
 def main():
     dpath = cfg.paths['val']
-    # pp = '/Users/hamzeasadi/python/videonoiseprint/data/asqar'
-    # r = datasetemp(datapath=pp, camframeperepoch=2)
-    # data = VideoNoiseDataset(datapath=dpath, batch_size=200, numcams=5)
-    # print(data[0].shape, data[0].device, data[0].dtype)
-    trainl, vall = create_loader(batch_size=200)
-    batch = next(iter(trainl))
-    print(batch.shape, batch.squeeze(dim=0).shape)
+   
+    print(coordxy[0,0,0].shape)
     
 
 
