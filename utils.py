@@ -101,9 +101,21 @@ class OneClassLoss(nn.Module):
 
 
 def main():
-    # lbls = calc_labels(batch_size=20, numcams=5)
+    print(42)
+    # lbls = calc_labels(batch_size=200, numcams=5)
     # print(lbls)
+    # print(lbls.shape)
     # print(lbls.device, lbls.dtype)
+
+    epochs = 100
+    m1 = [1000, 500, 250, 120, 60, 40, 30, 20, 10]
+    m2 = [500, 250, 120, 60, 40, 30, 20, 10, 5]
+
+    for i in range(epochs):
+        print(m1[i//10])
+        print(m2[i//10])
+        
+    
  
 
 

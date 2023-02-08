@@ -31,7 +31,7 @@ coordxy = coordinate(High=1080, Width=1920)
 
 def datasetemp(datapath, camframeperepoch):
     listofcam = cfg.rm_ds(os.listdir(datapath))
-    patches = [f'patch({i}_{j})' for i in range(11) for j in range(20)]
+    patches = [f'patch{i}_{j}' for i in range(11) for j in range(20)]
     temp = dict()
     for patch in patches:
         camtemp = []
@@ -69,14 +69,10 @@ class VideoNoiseDataset(Dataset):
     def __getitem__(self, index):
         patchid = self.patchkeys[index]
         patchepaths = self.patchs[patchid]
-        Patchs = torch.from_numpy(cv2.imread(patchepaths[0])/255.0).permute(2, 0, 1)[1:2, :, :]
-        if self.cw:
-            Patchs = torch.cat((Patchs, self.xy), dim=0)
-        Patchs = Patchs.unsqueeze(dim=0)
+        Patchs = torch.from_numpy(cv2.imread(patchepaths[0])/255.0).permute(2, 0, 1)[1:2, :, :].unsqueeze(dim=0)
+
         for i in range(1, len(patchepaths)):
             patch = torch.from_numpy(cv2.imread(patchepaths[i])/255.0).permute(2, 0, 1)[1:2, :, :]
-            if self.cw:
-                patch = torch.cat((patch, self.xy), dim=0)
             Patchs = torch.cat((Patchs, patch.unsqueeze(dim=0)), dim=0)
 
         return Patchs.float().to(dev)
@@ -94,10 +90,9 @@ def main():
     dpath = cfg.paths['train']
     # pp = '/Users/hamzeasadi/python/videonoiseprint/data/asqar'
     # r = datasetemp(datapath=pp, camframeperepoch=2)
-    # print(r)
-    patchid = f'patch_1_2'
-    cor = coordinate(High=64, Width=64)
-    print(cor)
+    data = VideoNoiseDataset(datapath=dpath, batch_size=200)
+    print(data[0].shape)
+
 
 
 
