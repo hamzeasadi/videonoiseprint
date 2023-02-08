@@ -60,6 +60,7 @@ class VideoNoiseDataset(Dataset):
         self.patchs = datasetemp(datapath=datapath, camframeperepoch=batch_size//numcams)
         # print(self.patchs)
         self.patchkeys = list(self.patchs.keys())
+        print(self.patchkeys)
         self.xy = coordinate(High=64, Width=64)
 
     def __len__(self):
@@ -68,7 +69,7 @@ class VideoNoiseDataset(Dataset):
     def getpatch(self, idx):
         patchid = self.patchkeys[idx]
         if self.cw:
-            _, hi, wi = patchid.strip('_')
+            _, hi, wi = patchid.split('_')
             hi, wi = int(hi), int(wi)
             patchcoord = coordxy[hi, wi, 0]
             patchspaths = self.patchs[patchid]
@@ -106,7 +107,9 @@ def create_loader(batch_size=200, caware=False):
 def main():
     dpath = cfg.paths['val']
    
-    print(coordxy[0,0,0].shape)
+    # data = VideoNoiseDataset(datapath=dpath, batch_size=200, numcams=5, coordaware=True)
+    idd = 'patch_0_0'
+    print(idd.split('_'))
     
 
 
