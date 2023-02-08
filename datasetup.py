@@ -59,7 +59,7 @@ class VideoNoiseDataset(Dataset):
         self.path = datapath
         self.bs = batch_size
         self.patchs = datasetemp(datapath=datapath, camframeperepoch=5)
-        print(self.patchs)
+        # print(self.patchs)
         self.patchkeys = list(self.patchs.keys())
         self.xy = coordinate(High=64, Width=64)
 
@@ -92,7 +92,7 @@ def main():
     # pp = '/Users/hamzeasadi/python/videonoiseprint/data/asqar'
     # r = datasetemp(datapath=pp, camframeperepoch=2)
     data = VideoNoiseDataset(datapath=dpath, batch_size=200)
-    # print(data[0].shape)
+    print(data[0].shape)
 
 
 
