@@ -11,20 +11,7 @@ import numpy as np
 
 dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-def datatemp(H=64, W=64, href=720, wref=1280):
-    hstart = (href%64)//2
-    wstart = 0
-    numh = href//64
-    numw = wref//64
-    tmp = dict()
-    patch_cnt = 0
-    for i in range(numh):
-        hi = hstart + i*H
-        for j in range(numw):
-            wi = wstart + j*W
-            tmp[f'patch{patch_cnt}'] = (hi, wi)
-            patch_cnt+=1
-    return tmp
+
 
 
 def coordinate(High, Width):
@@ -42,73 +29,24 @@ coordxy = coordinate(High=1080, Width=1920)
 
 
 
-def cropimg(img, patchid, H=64, W=64, coordinate=False):
-    h, w = patchid
-    crop = img[h:h+H, w:w+W, 1:2]
-    crop = 2*((crop - np.min(crop))/(np.max(crop) - np.min(crop) + 0.00001)) - 1
-    crop = torch.from_numpy(crop).permute(2, 0, 1).float()
-    if coordinate:
-        coordcrop = coordxy[:, h:h+H, w:w+W]
-        crop = torch.cat((crop, coordcrop), dim=0)
-    return crop.unsqueeze(dim=0)
+def datasetemp(datapath, camframeperepoch):
+    listofcam = cfg.rm_ds(os.listdir(datapath))
+    patches = [f'patch({i}_{j})' for i in range(11) for j in range(20)]
+    temp = dict()
+    for patch in patches:
+        camtemp = []
+        for cam in listofcam:
+            campatchpath = os.path.join(datapath, cam, patch)
+            listofpatches = os.listdir(campatchpath)
+            sublistofpatches = random.sample(listofpatches, camframeperepoch)
+            for subpatch in sublistofpatches:
+                subpatchpath = os.path.join(campatchpath, subpatch)
+                camtemp.append(subpatchpath)
+        
+        temp[patch] = camtemp
 
-def getpatch(folderpath, patchid, numframes, coord=False):
-    imgnames = os.listdir(folderpath)
-    subimages = random.sample(imgnames, numframes)
+    return temp
 
-    imgpath = os.path.join(folderpath, subimages[0])
-    img = cv2.imread(imgpath)
-    Crops = cropimg(img=img, patchid=patchid, coordinate=coord)
-
-    for i in range(1, numframes):
-        imgpath = os.path.join(folderpath, subimages[i])
-        img = cv2.imread(imgpath)
-        crop = cropimg(img=img, patchid=patchid, coordinate=coord)
-        Crops = torch.cat((Crops, crop), dim=0)
-    
-    return Crops
-
-
-def datasetitems(datasetpath:str):
-    cam2img = dict()
-    camsnames = os.listdir(datasetpath)
-    camsnames = cfg.rm_ds(camsnames)
-    for camname in camsnames:
-        campath = os.path.join(datasetpath, camname)
-        iframeslist = os.listdir(campath)
-        iframeslist = cfg.rm_ds(iframeslist)
-        cam2img[camname] = [os.path.join(campath, iframe) for iframe in iframeslist]
-    
-    return cam2img
-
-
-
-# class VideoNoiseDataset(Dataset):
-#     """
-#     doc
-#     """
-#     def __init__(self, datapath, batch_size, coordaware=False) -> None:
-#         super().__init__()
-#         self.bs = batch_size
-#         self.cw = coordaware
-#         self.path = datapath
-#         self.batchids = datatemp()
-#         keylist = list(self.batchids.keys())
-#         self.bidkeys = random.sample(keylist, len(keylist))
-#         folderspath = [os.path.join(datapath, foldername) for foldername in cfg.rm_ds(os.listdir(datapath))]
-#         self.folders = random.sample(folderspath, len(folderspath))
-#         self.imgpercam = batch_size//len(folderspath)
-
-#     def __len__(self):
-#         return len(self.bidkeys)
-
-#     def __getitem__(self, index):
-#         patches = getpatch(folderpath=self.folders[0], patchid=self.batchids[self.bidkeys[index]], numframes=self.imgpercam, coord=self.cw)
-#         for f in range(1, len(self.folders)):
-#             patch = getpatch(folderpath=self.folders[f], patchid=self.batchids[self.bidkeys[index]], numframes=self.imgpercam, coord=self.cw)
-#             patches = torch.cat((patches, patch), dim=0)
-
-#         return patches.to(dev)
 
 
 class VideoNoiseDataset(Dataset):
@@ -120,34 +58,33 @@ class VideoNoiseDataset(Dataset):
         self.cw = coordaware
         self.path = datapath
         self.bs = batch_size
-        self.patchs = datatemp()
-        self.patchids = list(self.patchs.keys())
-        # cam path based on data path 
-        self.cam2img = datasetitems(datasetpath=datapath)
-        self.imgpercam = batch_size//len(len(list(self.cam2img.keys())))
-
-    def getbatch(self, idx):
-        patchid = self.patchids[idx]
-        
+        self.patchs = datasetemp(datapath=datapath, camframeperepoch=5)
+        self.patchkeys = list(self.patchs.keys())
+        self.xy = coordinate(High=64, Width=64)
 
     def __len__(self):
-        return 220
+        return len(self.patchkeys)
 
 
     def __getitem__(self, index):
-        patchid = self.patchids[index]
-        imgid = self.imgids[index*5%500:(index+1)*5%500]
+        patchid = self.patchkeys[index]
+        patchepaths = self.patchs[patchid]
+        Patchs = torch.from_numpy(cv2.imread(patchepaths[0])/255.0).permute(2, 0, 1)[1:2, :, :]
+        if self.cw:
+            Patchs = torch.cat((Patchs, self.xy), dim=0)
+        Patchs = Patchs.unsqueeze(dim=0)
+        for i in range(1, len(patchepaths)):
+            patch = torch.from_numpy(cv2.imread(patchepaths[i])/255.0).permute(2, 0, 1)[1:2, :, :]
+            if self.cw:
+                patch = torch.cat((patch, self.xy), dim=0)
+            Patchs = torch.cat((Patchs, patch.unsqueeze(dim=0)), dim=0)
 
-        patches = getpatch(folderpath=self.folders[0], patchid=self.batchids[self.bidkeys[index]], numframes=self.imgpercam, coord=self.cw)
-        for f in range(1, len(self.folders)):
-            patch = getpatch(folderpath=self.folders[f], patchid=self.batchids[self.bidkeys[index]], numframes=self.imgpercam, coord=self.cw)
-            patches = torch.cat((patches, patch), dim=0)
-
-        return patches.to(dev)
+        return Patchs.float().to(dev)
 
 
 
-def create_loader(batch_size=198, caware=False):
+
+def create_loader(batch_size=200, caware=False):
     traindata = VideoNoiseDataset(datapath=cfg.paths['train'], batch_size=batch_size, coordaware=caware)
     valdata = VideoNoiseDataset(datapath=cfg.paths['val'], batch_size=batch_size, coordaware=caware)
     return DataLoader(traindata, batch_size=1), DataLoader(valdata, batch_size=1)
@@ -155,12 +92,15 @@ def create_loader(batch_size=198, caware=False):
 
 def main():
     dpath = cfg.paths['train']
-    # dataset = VideoNoiseDataset(datapath=dpath, batch_size=20, coordaware=True)
-    # batch = dataset[0]
-    # print(batch.shape)
-    tmp = datatemp()
-    cm2img = datasetitems(datasetpath=dpath)
-    print(cm2img)
+    # pp = '/Users/hamzeasadi/python/videonoiseprint/data/asqar'
+    # r = datasetemp(datapath=pp, camframeperepoch=2)
+    # print(r)
+    patchid = f'patch_1_2'
+    cor = coordinate(High=64, Width=64)
+    print(cor)
+
+
+
 if __name__ == '__main__':
     main()
 

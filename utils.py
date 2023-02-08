@@ -104,47 +104,7 @@ def main():
     # lbls = calc_labels(batch_size=20, numcams=5)
     # print(lbls)
     # print(lbls.device, lbls.dtype)
-    x1 = torch.randn(size=(9, 1, 64, 64))
-    x2 = torch.randn(size=(9, 1, 64, 64))
-    x = torch.cat((x1, x2), dim=0)
-    xs = x.squeeze()
-    # distmtx = euclidean_distance_matrix(x=xs)
-    # print(distmtx)
-    # print(torch.square(distmtx))
-    # print(distmtx.shape)
-    # loss = OneClassLoss(batch_size=20, num_cams=9, margin=3, reg=0.0001)
-    # l = loss(x.squeeze())
-    # print(l)
-    # # distmtx = euclidean_distance_matrix(x.squeeze())
-    # # print(distmtx)
-    # x = torch.tensor([
-    #     [0, 1, 10, 10], [2, 7, 1, 9]
-    # ], dtype=torch.float32)
-    # xs = 3*torch.softmax(x, dim=1)
-    # z = 3 -xs
-    # out = torch.sigmoid(z)
-    # # xs = -torch.log_softmax(x, dim=1)
-    # print(x)
-    # print(xs)
-    # print(z)
-    # print(out)
-    # # print(-torch.log(xs))
-
-    M1 = 20000
-    M2 = 600
-    m1 = []
-    m2 = []
-    epochs = list(range(150))
-    for epoch in epochs:
-        y = int(max((M1//(1+2*epoch) -0.8*epoch), 18))
-        x = max(M2//(1+1*epoch)+1, 6)
-        m1.append(y)
-        m2.append(x)
-
-    print(m1)
-    print(m2)
-    print(sum(np.array(m1)<19))
-    print(sum(np.array(m2)<7))
+ 
 
 
 if __name__ == '__main__':

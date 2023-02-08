@@ -72,59 +72,33 @@ def dataset_iframes(srccamspath, trgcamsiframspath):
         cam_align(camdirpath=camiframepath) 
 
 
-def create_patches(datapath, trgpath):
-    cams = cfg.rm_ds(os.listdir(datapath))
-    for cam in cams:
-        campath = os.path.join(datapath, cam)
-        camiframes = cfg.rm_ds(os.listdir(campath))
-        trgpatchpath = os.path.join(trgpath, cam)
-
-        for cnt, camiframe in enumerate(camiframes):
-            iframepath = os.path.join(campath, camiframe)
-            image = Image.open(iframepath)
-            image = np.asarray(image)
-            print(image.shape)
-            patches = patchify(image, (64, 64, 3), step=64)
-            patchsshape = patches.shape
-            for i in range(patchsshape[0]):
-                for j in range(patches.shape[1]):
-                    patchij = patches[i, j, 0]
-                    patchij = Image.fromarray(patchij)
-                    patchname = f'patch({i}_{j})'
-                    patchpath = os.path.join(trgpatchpath, patchname)
-                    cfg.createdir(patchpath)
-                    patchijpath = os.path.join(patchpath, f'patch{cnt}_{i}_{j}.bmp')
-                    patchij.save(patchijpath)
+def patching(srcpath, trgpath): 
+    listofcams = cfg.rm_ds(os.listdir(srcpath)) 
+    for cam in listofcams: 
+        campath = os.path.join(srcpath, cam) 
+        listofframes = cfg.rm_ds(os.listdir(campath)) 
+        trgcam = os.path.join(trgpath, cam) 
+        cfg.createdir(trgcam) 
+        for fr, iframe in enumerate(listofframes): 
+            iframepath = os.path.join(campath, iframe) 
+            image = Image.open(iframepath) 
+            image = np.asarray(image) 
+            patches = patchify(image, (64, 64, 3), step=64) 
+            patcheshape = patches.shape 
+            for i in range(patcheshape[0]): 
+                for j in range(patcheshape[1]): 
+                    patch = patches[i, j, 0] 
+                    patchid = f'patch_{i}_{j}' 
+                    patch = Image.fromarray(patch) 
+                    patchpath = os.path.join(trgcam, patchid) 
+                    cfg.createdir(patchpath) 
+                    patch.save(os.path.join(patchpath, f'patch{fr}.bmp'))
 
              
              
 def main(): 
     print(42) 
-    # listroot = os.listdir(os.getcwd()) 
-    # print(listroot) 
-    # datapath = 'F:/Datasets/visionDatasetCopy/' 
-    # trgpath = 'F:/Datasets/visionDatasetCopyiframes/' 
-    # dataset_iframes(srccamspath=datapath, trgcamsiframspath=trgpath) 
-     
-    # campath = 'F:/Datasets/visionDatasetCopy/D45_TruckTTR/' 
-    # camiframepath = 'F:/Datasets/visionDatasetCopyiframes/D45_TruckTTR' 
- 
-    # camiframes(campath=campath, camtrgiframpath=camiframepath) 
- 
-  
-     
-    # command = f"ffmpeg -skip_frame nokey -i {path} -vsync vfr -frame_pts true -x264opts no-deblock {trgpath}/iframe%d.bmp"  
- 
-    # imgpath = '/Users/hamzeasadi/python/videonoiseprint/data/iframes/train/D1/video0iframe0.bmp'
-    # img = Image.open(imgpath)
-    # image = np.asarray(img)
-    # print(image.shape)
-    # # patches = patchify(image, patch_size=[64, 64, 3], step=64)
-    # # print(patches.shape)
-
-    datapath = cfg.paths['train']
-    patpath = os.path.join(cfg.paths['data'], 'asqar')
-    create_patches(datapath=datapath, trgpath=patpath)
+    
      
      
 if __name__ == '__main__': 
