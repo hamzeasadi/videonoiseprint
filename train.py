@@ -35,8 +35,8 @@ mm2 = [1000, 500, 250, 120, 60, 40, 30, 20, 10]
 
 def epochtom(epoch, M1, M2, adaptive=False):
     if adaptive:
-        m1 = mm1[epoch//10]
-        m2 = mm2[epoch//10]
+        m1 = M1//(epoch+1)
+        m2 = M2//(epoch+1)
         return m1, m2
     else:
         return 5, 10

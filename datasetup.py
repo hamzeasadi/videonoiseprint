@@ -60,7 +60,7 @@ class VideoNoiseDataset(Dataset):
         self.patchs = datasetemp(datapath=datapath, camframeperepoch=batch_size//numcams)
         # print(self.patchs)
         self.patchkeys = list(self.patchs.keys())
-        print(self.patchkeys)
+        # print(self.patchkeys)
         self.xy = coordinate(High=64, Width=64)
 
     def __len__(self):
