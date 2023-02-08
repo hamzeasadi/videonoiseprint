@@ -8,7 +8,7 @@ root = os.getcwd()
 data = os.path.join(root, 'data')
 paths = dict(
     root=root, data=data, model=os.path.join(data, 'model'), 
-    dataset=os.path.join(home, 'Datasets'),
+    dataset=os.path.join(home, 'project', 'Datasets'),
     train=os.path.join(data, 'iframes', 'train'), val=os.path.join(data, 'iframes', 'val'), 
     testing=os.path.join(data, 'testing'), 
     cams=os.path.join(data, 'testing', 'cams'), refs=os.path.join(data, 'testing', 'refs'), 
