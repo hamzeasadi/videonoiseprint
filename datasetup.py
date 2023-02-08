@@ -53,12 +53,12 @@ class VideoNoiseDataset(Dataset):
     """
     doc
     """
-    def __init__(self, datapath, batch_size, coordaware=False) -> None:
+    def __init__(self, datapath, batch_size, numcams, coordaware=False) -> None:
         super().__init__()
         self.cw = coordaware
         self.path = datapath
         self.bs = batch_size
-        self.patchs = datasetemp(datapath=datapath, camframeperepoch=5)
+        self.patchs = datasetemp(datapath=datapath, camframeperepoch=batch_size//numcams)
         # print(self.patchs)
         self.patchkeys = list(self.patchs.keys())
         self.xy = coordinate(High=64, Width=64)
@@ -82,17 +82,18 @@ class VideoNoiseDataset(Dataset):
 
 
 def create_loader(batch_size=200, caware=False):
-    traindata = VideoNoiseDataset(datapath=cfg.paths['train'], batch_size=batch_size, coordaware=caware)
-    valdata = VideoNoiseDataset(datapath=cfg.paths['val'], batch_size=batch_size, coordaware=caware)
+    traindata = VideoNoiseDataset(datapath=cfg.paths['train'], batch_size=batch_size, numcams=40, coordaware=caware)
+    valdata = VideoNoiseDataset(datapath=cfg.paths['val'], batch_size=batch_size, numcams=5, coordaware=caware)
     return DataLoader(traindata, batch_size=1), DataLoader(valdata, batch_size=1)
 
 
 def main():
-    dpath = cfg.paths['train']
+    dpath = cfg.paths['val']
     # pp = '/Users/hamzeasadi/python/videonoiseprint/data/asqar'
     # r = datasetemp(datapath=pp, camframeperepoch=2)
-    data = VideoNoiseDataset(datapath=dpath, batch_size=200)
+    data = VideoNoiseDataset(datapath=dpath, batch_size=200, numcams=5)
     print(data[0].shape, data[0].device, data[0].dtype)
+    
 
 
 
