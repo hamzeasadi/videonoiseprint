@@ -92,7 +92,7 @@ def main():
     # pp = '/Users/hamzeasadi/python/videonoiseprint/data/asqar'
     # r = datasetemp(datapath=pp, camframeperepoch=2)
     data = VideoNoiseDataset(datapath=dpath, batch_size=200)
-    print(data[0].shape)
+    print(data[0].shape, data[0].device, data[0].dtype)
 
 
 
