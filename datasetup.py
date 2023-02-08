@@ -68,7 +68,7 @@ class VideoNoiseDataset(Dataset):
     def getpatch(self, idx):
         patchid = self.patchkeys[idx]
         if self.cw:
-            _, hi, wi = patchid.strip
+            _, hi, wi = patchid.strip('_')
             hi, wi = int(hi), int(wi)
             patchcoord = coordxy[hi, wi, 0]
             patchspaths = self.patchs[patchid]
