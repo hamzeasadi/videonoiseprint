@@ -98,7 +98,7 @@ def patching(srcpath, trgpath):
              
 def main(): 
     print(42) 
-    srcpath = os.path.join(cfg.paths['data'], 'visionDatasetiframes')
+    srcpath = os.path.join(cfg.paths['data'], 'iframe9cam')
     trgpath = os.path.join(cfg.paths['data'], 'iframes')
     patching(srcpath=srcpath, trgpath=trgpath)
      
