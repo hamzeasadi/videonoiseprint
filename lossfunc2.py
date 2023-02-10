@@ -43,7 +43,7 @@ class SoftMLoss(nn.Module):
     def forward(self, x):
         xs = x.squeeze()
         distmtx = utils.euclidean_distance_matrix(xs)
-        logits = torch.zeros(size=(self.logitsize, ))
+        logits = torch.zeros(size=(self.logitsize, ), device=dev)
         labels = []
         for rowidx, logitlblidx in self.distlbl.items():
             row = distmtx[rowidx]
