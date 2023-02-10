@@ -53,7 +53,7 @@ class SoftMLoss(nn.Module):
                 labels.append(logitlbl)
         finallogits = logits[1:]
         finallabels = torch.tensor(labels, device=dev, dtype=torch.long)
-        return self.crtsft(finallogits, finallabels)
+        return self.crtsft(-finallogits, finallabels)
 
 
 
