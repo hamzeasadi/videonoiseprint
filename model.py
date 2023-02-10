@@ -21,7 +21,7 @@ class VideoPrint(nn.Module):
 
         midelayers = [firstlayer]
         for i in range(self.depth):
-            layer=nn.Sequential(nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding='same'), nn.BatchNorm2d(num_features=64), nn.ReLU())
+            layer=nn.Sequential(nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding='same'), nn.BatchNorm2d(num_features=64, momentum=0.9, eps=1e-5), nn.ReLU())
             midelayers.append(layer)
         
         midelayers.append(lastlayer)

@@ -109,7 +109,7 @@ def main():
     # print(lbls.device, lbls.dtype)
 
     epochs = 100
-    M1 = 5000
+    M1 = 1000
     M2 = 10000
     m1 = []
     m2 = []
