@@ -1,10 +1,10 @@
-
 import os, random, sys
 import torch
 from torch import nn as nn
 from torch.optim import Optimizer
 from torch.nn import functional as F
 import numpy as np
+import lossfunc2 as loss2
 
 
 
@@ -88,6 +88,8 @@ class OneClassLoss(nn.Module):
         # self.m = margin*torch.ones(size=(distmtxdim, distmtxdim), device=dev, dtype=torch.float32)
         self.lbls = calc_labels(batch_size=batch_size, numcams=num_cams)
         self.crt = nn.BCEWithLogitsLoss()
+        self.newloss = loss2.SoftMLoss(batch_size=batch_size, framepercam=batch_size//num_cams)
+
 
     def forward(self, X):
         Xs = X.squeeze()
@@ -96,7 +98,8 @@ class OneClassLoss(nn.Module):
         logits = self.m - torch.square(distmatrix)
         l1 = self.crt(logits, self.lbls)
         l2 = calc_psd(x=Xs)
-        return l1 - self.reg*l2
+        l3 = self.newloss(Xs)
+        return l1 + l3 - self.reg*l2
 
 
 
