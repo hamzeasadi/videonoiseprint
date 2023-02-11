@@ -99,7 +99,7 @@ class OneClassLoss(nn.Module):
         distmatrix = euclidean_distance_matrix(x=Xs)
         for i in range(distmatrix.size()[0]):
             distmatrix[i,i] = 1e+10
-        logits = torch.softmax(-distmatrix)
+        logits = torch.softmax(-distmatrix, dim=1)
 
         # logits = self.m - torch.square(distmatrix)
         # l1 = self.crt(logits, self.lbls)
