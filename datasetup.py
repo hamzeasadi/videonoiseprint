@@ -107,7 +107,7 @@ class VideoNoiseDataset(Dataset):
 
 def create_loader(batch_size=200, caware=False):
     traindata = VideoNoiseDataset(datapath=cfg.paths['train'], batch_size=batch_size, numcams=40, coordaware=caware)
-    valdata = VideoNoiseDataset(datapath=cfg.paths['val'], batch_size=batch_size, numcams=5, coordaware=caware)
+    valdata = VideoNoiseDataset(datapath=cfg.paths['val'], batch_size=200, numcams=5, coordaware=caware)
     return DataLoader(traindata, batch_size=1), DataLoader(valdata, batch_size=1)
 
 

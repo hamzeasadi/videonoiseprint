@@ -47,8 +47,8 @@ def train(Net:nn.Module, optfunc:Optimizer, epochs, modelname, batch_size=200, c
     # traindata, valdata = dst.createdl()
     for epoch in range(epochs):
         m1, m2 = epochtom(epoch=epoch, M1=args.margin1, M2=args.margin2, adaptive=args.adaptive)
-        lossfunctr = utils.OneClassLoss(batch_size=args.batch_size, num_cams=40, reg=args.reg, m1=100, m2=200)
-        lossfuncvl = utils.OneClassLoss(batch_size=args.batch_size, num_cams=5, reg=args.reg, m1=100, m2=200)
+        lossfunctr = utils.OneClassLoss(batch_size=batch_size, num_cams=40, reg=args.reg, m1=100, m2=200)
+        lossfuncvl = utils.OneClassLoss(batch_size=200, num_cams=5, reg=args.reg, m1=100, m2=200)
 
         traindata, valdata = dst.create_loader(batch_size=batch_size, caware=coordaware)
         trainloss = engine.train_setp(net=Net, data=traindata, opt=optfunc, criterion=lossfunctr)
