@@ -95,7 +95,7 @@ class OneClassLoss(nn.Module):
 
         # self.crt = nn.BCEWithLogitsLoss()
         # self.newloss = loss2.SoftMLoss(batch_size=batch_size, framepercam=batch_size//num_cams)
-        self.crt = nn.BCELoss(reduction='sum')
+        self.crt = nn.BCELoss(reduction='mean')
 
     def forward(self, X):
         Xs = X.squeeze()
