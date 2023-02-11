@@ -52,6 +52,8 @@ def calc_labels(batch_size, numcams):
     labels = torch.zeros(size=(lbl_dim, lbl_dim), device=dev, dtype=torch.float32)
     for i in range(0, lbl_dim, numframes):
         labels[i:i+numframes, i:i+numframes] = 1
+    for i in range(labels.size()[0]):
+        labels[i,i]=0
     return labels
 
 
@@ -87,20 +89,26 @@ class OneClassLoss(nn.Module):
         # distmtxdim = num_cams * (batch_size//num_cams)
         # self.m = margin*torch.ones(size=(distmtxdim, distmtxdim), device=dev, dtype=torch.float32)
         self.lbls = calc_labels(batch_size=batch_size, numcams=num_cams)
-        self.crt = nn.BCEWithLogitsLoss()
-        self.newloss = loss2.SoftMLoss(batch_size=batch_size, framepercam=batch_size//num_cams)
-
+        # self.crt = nn.BCEWithLogitsLoss()
+        # self.newloss = loss2.SoftMLoss(batch_size=batch_size, framepercam=batch_size//num_cams)
+        self.crt = nn.BCELoss(reduction='mean')
 
     def forward(self, X):
         Xs = X.squeeze()
 
-        # distmatrix = euclidean_distance_matrix(x=Xs)
+        distmatrix = euclidean_distance_matrix(x=Xs)
+        for i in range(distmatrix.size()[0]):
+            distmatrix[i,i] = 1e+10
+        logits = torch.softmax(-distmatrix)
+
         # logits = self.m - torch.square(distmatrix)
         # l1 = self.crt(logits, self.lbls)
-        l2 = self.reg*calc_psd(x=Xs)
-        l3 = self.newloss(Xs)
-        # return l1+l3 - l2
-        return l3 - l2
+        # l2 = self.reg*calc_psd(x=Xs)
+        # l3 = self.newloss(Xs)
+        # # return l1+l3 - l2
+        # return l3 - l2
+
+        return self.crt(logits, self.lbls)
 
 
 
@@ -112,21 +120,31 @@ def main():
     # print(lbls.shape)
     # print(lbls.device, lbls.dtype)
 
-    epochs = 100
-    M1 = 1000
-    M2 = 10000
-    m1 = []
-    m2 = []
-    for i in range(epochs):
-        x = int(M1*np.exp(-i/5))
-        m1.append(max(5, x))
-        y = int(M2*np.exp(-i/10))
-        m2.append(max(10, y))
-    print(m1)
-    print(m2)
-    # m = calc_m(batch_size=100, numcams=40, m1=10, m2=100)
-    # print(m)
-        
+    # epochs = 100
+    # M1 = 1000
+    # M2 = 10000
+    # m1 = []
+    # m2 = []
+    # for i in range(epochs):
+    #     x = int(M1*np.exp(-i/5))
+    #     m1.append(max(5, x))
+    #     y = int(M2*np.exp(-i/10))
+    #     m2.append(max(10, y))
+    # print(m1)
+    # print(m2)
+    # # m = calc_m(batch_size=100, numcams=40, m1=10, m2=100)
+    # # print(m)
+
+    x = torch.tensor([[0, 2,10,15], [2,0, 17,20], [10, 17, 0, 1], [15, 20, 1, 0]], dtype=torch.float32) 
+    y = torch.tensor([[0,0, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], dtype=torch.float32)
+    for i in range(x.size()[0]):
+        x[i,i] = 1e+10
+    xs = torch.softmax(-x, dim=1)
+    print(xs)   
+    loss = nn.BCELoss(reduction='sum')
+    ll = loss(xs, y)
+    print(ll)
+    print(calc_labels(batch_size=10, numcams=5))
 
     
  
