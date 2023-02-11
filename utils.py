@@ -94,12 +94,12 @@ class OneClassLoss(nn.Module):
     def forward(self, X):
         Xs = X.squeeze()
 
-        # distmatrix = euclidean_distance_matrix(x=Xs)
-        # logits = self.m - torch.square(distmatrix)
-        # l1 = self.crt(logits, self.lbls)
+        distmatrix = euclidean_distance_matrix(x=Xs)
+        logits = self.m - torch.square(distmatrix)
+        l1 = self.crt(logits, self.lbls)
         l2 = calc_psd(x=Xs)
         l3 = self.newloss(Xs)
-        return l3 - self.reg*l2
+        return l1+l3 - self.reg*l2
 
 
 
