@@ -65,7 +65,7 @@ def calc_m(batch_size, numcams, m1, m2):
                 lbls[i, j] = 0
                 
             elif lbls[i, j] == 0:
-                lbls[i, j] = 0.3
+                lbls[i, j] = 6000
 
     return lbls
 
@@ -104,16 +104,18 @@ class OneClassLoss(nn.Module):
         
         for i in range(distmatrix.size()[0]):
             distmatrix[i,i] = 1e+10
-        logits = torch.softmax(-distmatrix, dim=1)
+        newlogits = self.m - torch.square(distmatrix)
+        logits = torch.softmax(newlogits, dim=1)
+        
         # logitsmargin = logits + self.m
         # logits = self.m - torch.square(distmatrix)
         # l1 = self.crt(logits, self.lbls)
-        l2 = self.reg*calc_psd(x=Xs)
+        # l2 = self.reg*calc_psd(x=Xs)
         # l3 = self.newloss(Xs)
         # # return l1+l3 - l2
         # return l3 - l2
 
-        return self.crt(logits, self.lbls) - l2
+        return self.crt(logits, self.lbls)
 
 
 

@@ -6,7 +6,8 @@ from sklearn.metrics import confusion_matrix, auc, roc_auc_score, roc_curve, acc
 import numpy as np
 import utils
 import helper as hp
-
+import model as m
+from matplotlib import pyplot as plt
 
 
 
@@ -56,14 +57,27 @@ def ncc_cams(srcnps, refnps):
 
 
 def main():
-    x = np.array([1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0])
+    img = cv2.imread(os.path.join(cfg.paths['data'], 'video1iframe0.bmp'))
+    img0 = 2*(img[300:700, 850:1250, 1:2] - np.min(img[:, :, 1:2] ))/(np.max(img[:, :, 1:2] ) - np.min(img[:, :, 1:2] ) + 1e-5)
+    imgt = torch.from_numpy(img0).permute(2, 0, 1).unsqueeze(dim=0).float()
+
+
+    kt = utils.KeepTrack(path=cfg.paths['model'])
+    listofmodels = os.listdir(cfg.paths['model'])
+    # state = kt.load_ckp(fname=listofmodels[-1])
+    state = kt.load_ckp(fname=f'noisprintcoord2_{9}.pt')
     
-    srcnps = cfg.paths['np']
-    refnps = cfg.paths['refs']
-    allncc, allmse = ncc_cams(srcnps=srcnps, refnps=refnps)
-    print(allncc)
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    print(allmse)
+    model = m.VideoPrint(inch=1, depth=15)
+    model.load_state_dict(state['model'], strict=False)
+    model.eval()
+    with torch.no_grad():
+        out = model(imgt)
+        print(out.shape)
+    
+    img = out.detach().squeeze().numpy()
+    plt.imshow(img, cmap='gray')
+    plt.show()
+
 
 if __name__ == "__main__":
     main()
