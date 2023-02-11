@@ -95,7 +95,7 @@ class OneClassLoss(nn.Module):
 
         # self.crt = nn.BCEWithLogitsLoss()
         # self.newloss = loss2.SoftMLoss(batch_size=batch_size, framepercam=batch_size//num_cams)
-        self.crt = nn.BCELoss(reduction='mean')
+        self.crt = nn.BCELoss(reduction='sum')
 
     def forward(self, X):
         Xs = X.squeeze()
@@ -105,15 +105,15 @@ class OneClassLoss(nn.Module):
         for i in range(distmatrix.size()[0]):
             distmatrix[i,i] = 1e+10
         logits = torch.softmax(-distmatrix, dim=1)
-        logitsmargin = logits + self.m
+        # logitsmargin = logits + self.m
         # logits = self.m - torch.square(distmatrix)
         # l1 = self.crt(logits, self.lbls)
-        # l2 = self.reg*calc_psd(x=Xs)
+        l2 = self.reg*calc_psd(x=Xs)
         # l3 = self.newloss(Xs)
         # # return l1+l3 - l2
         # return l3 - l2
 
-        return self.crt(logitsmargin, self.lbls)
+        return self.crt(logits, self.lbls) - l2
 
 
 
