@@ -124,13 +124,13 @@ class OneClassLoss(nn.Module):
 def main():
     print(42)
     epochs = 100
-    # for i in range(epochs):
-    #     m1 = 10000/(1+i)
-    #     m2 = 300/(1+i)
-    #     print(m1, m2)
+    for i in range(epochs):
+        m1 = 10000/(1+i)
+        m2 = 200/(1+i)
+        print(int(m1), int(m2))
 
-    print(calc_labels(batch_size=200, numcams=40))
-    print(calc_m(batch_size=200, numcams=40, m1=10, m2=100))
+    # print(calc_labels(batch_size=200, numcams=40))
+    # print(calc_m(batch_size=200, numcams=40, m1=10, m2=100))
 
 
     
