@@ -62,10 +62,10 @@ def calc_m(batch_size, numcams, m1, m2):
     for i in range(lbls.size()[0]):
         for j in range(lbls.size()[1]):
             if lbls[i, j] == 1:
-                lbls[i, j] = 0
+                lbls[i, j] = m1
                 
             elif lbls[i, j] == 0:
-                lbls[i, j] = 6000
+                lbls[i, j] = m2
 
     return lbls
 
@@ -90,44 +90,48 @@ class OneClassLoss(nn.Module):
         # distmtxdim = num_cams * (batch_size//num_cams)
         # self.m = margin*torch.ones(size=(distmtxdim, distmtxdim), device=dev, dtype=torch.float32)
         self.lbls = calc_labels(batch_size=batch_size, numcams=num_cams)
-        for i in range(self.lbls.size()[0]):
-            self.lbls[i,i] = 0
+        # for i in range(self.lbls.size()[0]):
+        #     self.lbls[i,i] = 0
 
-        # self.crt = nn.BCEWithLogitsLoss()
+        self.crt = nn.BCEWithLogitsLoss()
         # self.newloss = loss2.SoftMLoss(batch_size=batch_size, framepercam=batch_size//num_cams)
-        self.crt = nn.BCELoss(reduction='mean')
+        # self.crt = nn.BCELoss(reduction='mean')
 
     def forward(self, X):
         Xs = X.squeeze()
 
         distmatrix = euclidean_distance_matrix(x=Xs)
         
-        for i in range(distmatrix.size()[0]):
-            distmatrix[i,i] = 1e+10
-        newlogits = - torch.square(distmatrix)
-        logits = torch.softmax(newlogits, dim=1)
+        # for i in range(distmatrix.size()[0]):
+        #     distmatrix[i,i] = 1e+10
+        # newlogits = - torch.square(distmatrix)
+        # logits = torch.softmax(newlogits, dim=1)
         
         # logitsmargin = logits + self.m
         # logits = self.m - torch.square(distmatrix)
         # l1 = self.crt(logits, self.lbls)
-        # l2 = self.reg*calc_psd(x=Xs)
+        l2 = self.reg*calc_psd(x=Xs)
         # l3 = self.newloss(Xs)
         # # return l1+l3 - l2
         # return l3 - l2
 
-        return self.crt(logits, self.lbls)
+        logits = self.m - distmatrix
+
+        return self.crt(logits, self.lbls) - l2
 
 
 
 def main():
     print(42)
-    x = torch.randn(size=(200, 64, 64))
-    ll = OneClassLoss(batch_size=200, num_cams=40, reg=1, m1=1, m2=2)
-    di = euclidean_distance_matrix(x)
-    dis = torch.softmax(di, dim=1)
-    print(dis.dtype, ll.m.dtype)
-    ll.m.requires_grad=True
-    print(ll.m.requires_grad)
+    epochs = 100
+    # for i in range(epochs):
+    #     m1 = 10000/(1+i)
+    #     m2 = 300/(1+i)
+    #     print(m1, m2)
+
+    print(calc_labels(batch_size=200, numcams=40))
+    print(calc_m(batch_size=200, numcams=40, m1=10, m2=100))
+
 
     
     
