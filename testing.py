@@ -58,24 +58,28 @@ def ncc_cams(srcnps, refnps):
 
 def main():
     img = cv2.imread(os.path.join(cfg.paths['data'], 'video1iframe0.bmp'))
-    img0 = 2*(img[300:700, 850:1250, 1:2] - np.min(img[:, :, 1:2] ))/(np.max(img[:, :, 1:2] ) - np.min(img[:, :, 1:2] ) + 1e-5)
+    # img0 = 2*(img[300:700, 850:1250, 1:2] - np.min(img[:, :, 1:2] ))/(np.max(img[:, :, 1:2] ) - np.min(img[:, :, 1:2] ) + 1e-5) -1
+    img0 = 1*(img[:, :, 1:2] - np.min(img[:, :, 1:2] ))/(np.max(img[:, :, 1:2] ) - np.min(img[:, :, 1:2] ))
+    
+    # img0 = (img[300:700, 850:1250, 1:2] - 127 )/255
     imgt = torch.from_numpy(img0).permute(2, 0, 1).unsqueeze(dim=0).float()
 
 
     kt = utils.KeepTrack(path=cfg.paths['model'])
     listofmodels = os.listdir(cfg.paths['model'])
     # state = kt.load_ckp(fname=listofmodels[-1])
-    state = kt.load_ckp(fname=f'noisprintcoord2_{50}.pt')
+    # state = kt.load_ckp(fname=f'noisprintcoord2_{50}.pt')
+    state = kt.load_ckp(fname='modelfingerprint0_99.pt')
     print(state['trainloss'], state['valloss'])
     model = m.VideoPrint(inch=1, depth=15)
-    model.load_state_dict(state['model'], strict=False)
+    model.load_state_dict(state['model'], strict=True)
     model.eval()
     with torch.no_grad():
         out = model(imgt)
         print(out.shape)
     
-    img = out.detach().squeeze().numpy()
-    plt.imshow(img, cmap='gray')
+    img1 = out.detach().squeeze().numpy()
+    plt.imshow(img1, cmap='gray')
     plt.show()
 
 
