@@ -104,7 +104,7 @@ class OneClassLoss(nn.Module):
         
         for i in range(distmatrix.size()[0]):
             distmatrix[i,i] = 1e+10
-        newlogits = self.m - torch.square(distmatrix)
+        newlogits = - torch.square(distmatrix)
         logits = torch.softmax(newlogits, dim=1)
         
         # logitsmargin = logits + self.m

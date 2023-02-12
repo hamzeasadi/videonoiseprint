@@ -65,7 +65,7 @@ def main():
     kt = utils.KeepTrack(path=cfg.paths['model'])
     listofmodels = os.listdir(cfg.paths['model'])
     # state = kt.load_ckp(fname=listofmodels[-1])
-    state = kt.load_ckp(fname=f'noisprintcoord2_{9}.pt')
+    state = kt.load_ckp(fname=f'noisprintcoord2_{50}.pt')
     print(state['trainloss'], state['valloss'])
     model = m.VideoPrint(inch=1, depth=15)
     model.load_state_dict(state['model'], strict=False)
