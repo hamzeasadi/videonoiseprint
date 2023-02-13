@@ -33,8 +33,8 @@ args = parser.parse_args()
 
 def epochtom(epoch, M1, M2, adaptive=False):
     if adaptive:
-        m1 = M1/(1+epoch)
-        m2 = M2/(1+epoch)
+        m1 = int(max(20, M1/(1+epoch)))
+        m2 = int(max(500, M2/(1+epoch)))
         return m1, m2
     else:
         return 5, 10
@@ -47,7 +47,7 @@ def train(Net:nn.Module, optfunc:Optimizer, epochs, modelname, batch_size=200, c
     # traindata, valdata = dst.createdl()
     for epoch in range(epochs):
         m1, m2 = epochtom(epoch=epoch, M1=args.margin1, M2=args.margin2, adaptive=args.adaptive)
-        lossfunctr = utils.OneClassLoss(batch_size=batch_size, num_cams=10, reg=args.reg, m1=20, m2=500)
+        lossfunctr = utils.OneClassLoss(batch_size=batch_size, num_cams=10, reg=args.reg, m1=m1, m2=m2)
         lossfuncvl = utils.OneClassLoss(batch_size=200, num_cams=5, reg=args.reg, m1=m1, m2=m2)
 
         traindata, valdata = dst.create_loader(batch_size=batch_size, caware=coordaware)
