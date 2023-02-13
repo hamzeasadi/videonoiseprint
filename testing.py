@@ -8,7 +8,7 @@ import utils
 import helper as hp
 import model as m
 from matplotlib import pyplot as plt
-
+from torch import nn as nn
 
 
 
@@ -69,9 +69,10 @@ def main():
     listofmodels = os.listdir(cfg.paths['model'])
     # state = kt.load_ckp(fname=listofmodels[-1])
     # state = kt.load_ckp(fname=f'noisprintcoord2_{50}.pt')
-    state = kt.load_ckp(fname='modelfingerprint0_99.pt')
+    state = kt.load_ckp(fname='noisprintcoord2_99.pt')
     print(state['trainloss'], state['valloss'])
     model = m.VideoPrint(inch=1, depth=15)
+    model = nn.DataParallel(model)
     model.load_state_dict(state['model'], strict=True)
     model.eval()
     with torch.no_grad():
