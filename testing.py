@@ -50,7 +50,12 @@ def ncc_cams(srcnps, refnps):
 
 
 
-
+def calc_psd(x):
+    # x = x.squeeze()
+    dft = torch.fft.fft2(x)
+    avgpsd =  torch.mean(torch.mul(dft, dft.conj()).real, dim=0)
+    r = torch.mean(torch.log(avgpsd)) - torch.log(torch.mean(avgpsd))
+    return r
 
 
 
@@ -64,12 +69,23 @@ def main():
     # img0 = (img[300:700, 850:1250, 1:2] - 127 )/255
     imgt = torch.from_numpy(img0).permute(2, 0, 1).unsqueeze(dim=0).float()
 
+    # imgt = torch.from_numpy(img0).permute(2, 0, 1).float()
+    # xx = torch.zeros(size=(200, 64, 64))
+    # for i in range(10):
+    #     hi = i*64
+    #     for j in range(20):
+    #         wi = j*64
+    #         xx[i*20+j] = imgt[0, hi:hi+64, wi:wi+64]
+    
+    # r = calc_psd(xx)
+    # print(r)
 
+ 
     kt = utils.KeepTrack(path=cfg.paths['model'])
     listofmodels = os.listdir(cfg.paths['model'])
     # state = kt.load_ckp(fname=listofmodels[-1])
     # state = kt.load_ckp(fname=f'noisprintcoord2_{50}.pt')
-    state = kt.load_ckp(fname='noisprintcoord2_99.pt')
+    state = kt.load_ckp(fname='noisprintcoord2_27.pt')
     print(state['trainloss'], state['valloss'])
     model = m.VideoPrint(inch=1, depth=15)
     model = nn.DataParallel(model)
