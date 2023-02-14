@@ -127,8 +127,8 @@ def main():
     m1 = []
     m2 = []
     for i in range(epochs): 
-        m1.append(int(max(20, 300/(1+i))))
-        m2.append(int(max(500, 10000/(1+i))))
+        m1.append(int(max(1, 10000/(1+i))))
+        m2.append(int(max(5, 100000/(1+i))))
 
     print(m1)
     print(m2)
