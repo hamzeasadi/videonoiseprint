@@ -111,13 +111,13 @@ class OneClassLoss(nn.Module):
         # logits = self.m - torch.square(distmatrix)
         # l1 = self.crt(logits, self.lbls)
         l2 = self.reg*calc_psd(x=Xs)
-        l3 = self.newloss(Xs)
+        # l3 = self.newloss(Xs)
         # # return l1+l3 - l2
         # return l3 - l2
 
-        # logits = self.m - torch.square(distmatrix)
+        logits = self.m - torch.square(distmatrix)
 
-        return l3 - l2
+        return self.crt(logits, self.lbls) - l2
 
 
 
