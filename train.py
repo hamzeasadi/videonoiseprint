@@ -46,7 +46,7 @@ def train(Net:nn.Module, optfunc:Optimizer, epochs, modelname, batch_size=200, c
     kt = utils.KeepTrack(path=cfg.paths['model'])
     # traindata, valdata = dst.createdl()
     for epoch in range(epochs):
-        reg = epoch/(epochs+10)
+        reg = 10 - epoch%10
         m1, m2 = epochtom(epoch=epoch, M1=args.margin1, M2=args.margin2, adaptive=args.adaptive)
         lossfunctr = utils.OneClassLoss(batch_size=batch_size, num_cams=10, reg=reg, m1=m1, m2=m2)
         lossfuncvl = utils.OneClassLoss(batch_size=200, num_cams=5, reg=args.reg, m1=m1, m2=m2)
