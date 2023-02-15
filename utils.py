@@ -94,7 +94,7 @@ class OneClassLoss(nn.Module):
         #     self.lbls[i,i] = 0
 
         self.crt = nn.BCEWithLogitsLoss()
-        # self.newloss = loss2.SoftMLoss(batch_size=batch_size, framepercam=batch_size//num_cams)
+        self.newloss = loss2.SoftMLoss(batch_size=batch_size, framepercam=batch_size//num_cams)
         # self.crt = nn.BCELoss(reduction='mean')
 
     def forward(self, X):
@@ -111,27 +111,27 @@ class OneClassLoss(nn.Module):
         # logits = self.m - torch.square(distmatrix)
         # l1 = self.crt(logits, self.lbls)
         l2 = self.reg*calc_psd(x=Xs)
-        # l3 = self.newloss(Xs)
+        l3 = self.newloss(Xs)
         # # return l1+l3 - l2
         # return l3 - l2
 
         logits = self.m - torch.square(distmatrix)
 
-        return self.crt(logits, self.lbls) - l2
+        return self.crt(logits, self.lbls) - l2 + l3
 
 
 
 def main():
     print(42)
-    epochs = 100
+    epochs = 1000
     m1 = []
     m2 = []
     for i in range(epochs): 
         m1.append(int(max(1, 10000/(1+i))))
         m2.append(int(max(5, 100000/(1+i))))
 
-    print(m1)
-    print(m2)
+    print(m1[300])
+    print(m2[300])
 
     # print(calc_labels(batch_size=200, numcams=40))
     # print(calc_m(batch_size=200, numcams=40, m1=10, m2=100))

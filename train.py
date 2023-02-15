@@ -65,9 +65,6 @@ def train(Net:nn.Module, optfunc:Optimizer, epochs, modelname, batch_size=200, c
 
 
 
-
-
-
 def main():
     inch=1
     if args.coord:
