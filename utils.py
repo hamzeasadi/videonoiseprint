@@ -115,9 +115,9 @@ class OneClassLoss(nn.Module):
         # # return l1+l3 - l2
         # return l3 - l2
 
-        logits = self.m - torch.square(distmatrix)
+        # logits = self.m - torch.square(distmatrix)
 
-        return self.crt(logits, self.lbls) - l2 + l3
+        return l3 - l2
 
 
 
