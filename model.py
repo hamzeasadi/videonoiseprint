@@ -30,7 +30,7 @@ class VideoPrint(nn.Module):
 
     def forward(self, x):
         out = self.noisext(x)
-        res = x[:, 0:1, :, :]-out
+        res = x[:, 0:1, :, :] - out
         return res
 
 
