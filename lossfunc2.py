@@ -35,9 +35,10 @@ class SoftMLoss(nn.Module):
     def __init__(self, batch_size, framepercam) -> None:
         super().__init__()
         self.distlbl = distmtxidxlbl(batch_size=batch_size, frprcam=framepercam)
-        self.crtsft = nn.CrossEntropyLoss()
+        # self.crtsft = nn.CrossEntropyLoss()
         self.logitsize = batch_size - framepercam + 1
-        self.crtbce = nn.BCEWithLogitsLoss()
+        # self.crtbce = nn.BCEWithLogitsLoss()
+        self.crtsft = nn.BCELoss()
 
 
     def forward(self, x):
@@ -57,8 +58,8 @@ class SoftMLoss(nn.Module):
         
 
         finallabels = labels[1:]
-        finallogits = torch.softmax(logits[1:], dim=1)
-        return self.crtbce(finallogits, finallabels)
+        finallogits = torch.softmax(-logits[1:], dim=1)
+        return self.crtsft(finallogits, finallabels)
 
 
     # def forward(self, x):
