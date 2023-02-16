@@ -5,6 +5,7 @@ from torch import nn as nn
 from math import comb
 
 
+
 dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
@@ -32,18 +33,19 @@ def distmtxidxlbl(batch_size, frprcam):
 
 
 class SoftMLoss(nn.Module):
-    def __init__(self, batch_size, framepercam) -> None:
+    def __init__(self, batch_size, framepercam, m1, m2) -> None:
         super().__init__()
         self.distlbl = distmtxidxlbl(batch_size=batch_size, frprcam=framepercam)
         # self.crtsft = nn.CrossEntropyLoss()
         self.logitsize = batch_size - framepercam + 1
         # self.crtbce = nn.BCEWithLogitsLoss()
         self.crtsft = nn.BCELoss(reduction='mean')
-
+        self.m = utils.calc_m(batch_size=batch_size, numcams=batch_size//framepercam, m1=m1, m2=m2)
 
     def forward(self, x):
         xs = x.squeeze()
         distmtx = utils.euclidean_distance_matrix(xs)
+        distmtx = self.m - distmtx
         logits = torch.zeros(size=(self.logitsize, ), device=dev)
         labels = torch.zeros(size=(self.logitsize, ), device=dev)
         for distmtxrowidx, logitsidxlblidx in self.distlbl.items():
@@ -58,7 +60,7 @@ class SoftMLoss(nn.Module):
         
 
         finallabels = labels[1:]
-        finallogits = torch.softmax(-logits[1:], dim=1)
+        finallogits = torch.softmax(logits[1:], dim=1)
         return self.crtsft(finallogits, finallabels)
 
 
