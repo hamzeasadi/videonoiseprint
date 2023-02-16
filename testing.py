@@ -7,6 +7,7 @@ import numpy as np
 import utils
 import helper as hp
 import model as m
+import model2 as m2
 from matplotlib import pyplot as plt
 from torch import nn as nn
 
@@ -65,7 +66,7 @@ def main():
     img = cv2.imread(os.path.join(cfg.paths['data'], 'video1iframe0.bmp'))
     # img0 = 2*(img[300:700, 850:1250, 1:2] - np.min(img[:, :, 1:2] ))/(np.max(img[:, :, 1:2] ) - np.min(img[:, :, 1:2] ) + 1e-5) -1
     # img0 = 1*(img[:, :, 1:2] - np.min(img[:, :, 1:2] ))/(np.max(img[:, :, 1:2] ) - np.min(img[:, :, 1:2] ))
-    img0 = (img[100:500, 500:1000, 1:2] -127 )/255
+    img0 = (img[100:200, 100:200, 1:2] -127 )/255
     
     # img0 = (img[300:700, 850:1250, 1:2] - 127 )/255
     imgt = torch.from_numpy(img0).permute(2, 0, 1).unsqueeze(dim=0).float()
@@ -86,17 +87,18 @@ def main():
     listofmodels = os.listdir(cfg.paths['model'])
     # state = kt.load_ckp(fname=listofmodels[-1])
     # state = kt.load_ckp(fname=f'noisprintcoord2_{50}.pt')
-    state = kt.load_ckp(fname='noisprintcoord2_7.pt')
+    state = kt.load_ckp(fname='noisprintcoord2_9.pt')
     print(state['trainloss'], state['valloss'])
-    model = m.VideoPrint(inch=1, depth=15)
+    model = m2.VideoPrint(inch=1, depth=15)
     model = nn.DataParallel(model)
     model.load_state_dict(state['model'], strict=True)
     model.eval()
     with torch.no_grad():
-        out = model(imgt)
+        out, _ = model(imgt, imgt)
         print(out.shape)
     
     img1 = out.detach().squeeze().numpy()
+    print(img1)
     plt.imshow(img1, cmap='gray')
     plt.show()
 
