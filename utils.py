@@ -86,7 +86,7 @@ class OneClassLoss(nn.Module):
         self.bs = batch_size
         self.nc = num_cams
         self.reg = reg
-        # self.m = calc_m(batch_size=batch_size, numcams=num_cams, m1=m1, m2=m2)
+        self.m = calc_m(batch_size=batch_size, numcams=num_cams, m1=m1, m2=m2)
         # distmtxdim = num_cams * (batch_size//num_cams)
         # self.m = margin*torch.ones(size=(distmtxdim, distmtxdim), device=dev, dtype=torch.float32)
         # self.lbls = calc_labels(batch_size=batch_size, numcams=num_cams, m1=m1, m2=m2)
