@@ -15,7 +15,7 @@ def train_setp(net: nn.Module, data:DataLoader, opt:Optimizer, criterion:nn.Modu
     numbatchs = len(data)
     net.train()
     for X1, X2, Y in data:
-        res1, res2 = net(X1, X2)
+        res1, res2 = net(X1.to(dev), X2.to(dev))
         loss = criterion(res1, res2, Y)
         opt.zero_grad()
         loss.backward()
@@ -31,7 +31,7 @@ def val_setp(net: nn.Module, data:DataLoader, opt:Optimizer, criterion:nn.Module
     net.eval()
     with torch.no_grad():
         for X1, X2, Y in data:
-            res1, res2 = net(X1, X2)
+            res1, res2 = net(X1.to(dev), X2.to(dev))
             loss = criterion(res1, res2, Y)
             opt.zero_grad()
             loss.backward()
