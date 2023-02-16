@@ -69,7 +69,7 @@ class VideoNoiseDataset(Dataset):
             y = torch.tensor([0], device=dev, dtype=torch.float32)
     
 
-        return img1.to(dev), img2.to(dev), y
+        return img1.float(), img2.float(), y
 
 
 
