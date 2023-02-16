@@ -38,7 +38,7 @@ class SoftMLoss(nn.Module):
         # self.crtsft = nn.CrossEntropyLoss()
         self.logitsize = batch_size - framepercam + 1
         # self.crtbce = nn.BCEWithLogitsLoss()
-        self.crtsft = nn.BCELoss(reduction='sum')
+        self.crtsft = nn.BCELoss(reduction='mean')
 
 
     def forward(self, x):
