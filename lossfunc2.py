@@ -37,23 +37,44 @@ class SoftMLoss(nn.Module):
         self.distlbl = distmtxidxlbl(batch_size=batch_size, frprcam=framepercam)
         self.crtsft = nn.CrossEntropyLoss()
         self.logitsize = batch_size - framepercam + 1
-
+        self.crtbce = nn.BCEWithLogitsLoss()
 
 
     def forward(self, x):
         xs = x.squeeze()
         distmtx = utils.euclidean_distance_matrix(xs)
         logits = torch.zeros(size=(self.logitsize, ), device=dev)
-        labels = []
-        for rowidx, logitlblidx in self.distlbl.items():
-            row = distmtx[rowidx]
-            rowlogitsidx, rowlbls = logitlblidx
-            for logitidx, logitlbl in zip(rowlogitsidx, rowlbls):
-                logits = torch.vstack((logits, row[logitidx]))
-                labels.append(logitlbl)
-        finallogits = logits[1:]
-        finallabels = torch.tensor(labels, device=dev, dtype=torch.long)
-        return self.crtsft(-finallogits, finallabels)
+        labels = torch.zeros(size=(self.logitsize, ), device=dev)
+        for distmtxrowidx, logitsidxlblidx in self.distlbl.items():
+            distmtxrow = distmtx[distmtxrowidx]
+            rowlogitsidx, rowlblidx = logitsidxlblidx
+            for logitidx, lblidx in zip(rowlogitsidx, rowlblidx):
+                logit = distmtxrow[logitidx]
+                lbl = torch.zeros_like(logit, device=dev)
+                lbl[lblidx] = 1
+                labels = torch.vstack((labels, lbl))
+                logits = torch.vstack((logits, logit))
+        
+
+        finallabels = labels[1:]
+        finallogits = torch.softmax(logits[1:], dim=1)
+        return self.crtbce(finallogits, finallabels)
+
+
+    # def forward(self, x):
+    #     xs = x.squeeze()
+    #     distmtx = utils.euclidean_distance_matrix(xs)
+    #     logits = torch.zeros(size=(self.logitsize, ), device=dev)
+    #     labels = []
+    #     for rowidx, logitlblidx in self.distlbl.items():
+    #         row = distmtx[rowidx]
+    #         rowlogitsidx, rowlbls = logitlblidx
+    #         for logitidx, logitlbl in zip(rowlogitsidx, rowlbls):
+    #             logits = torch.vstack((logits, row[logitidx]))
+    #             labels.append(logitlbl)
+    #     finallogits = logits[1:]
+    #     finallabels = torch.tensor(labels, device=dev, dtype=torch.long)
+    #     return self.crtsft(-finallogits, finallabels)
 
 
 
@@ -62,12 +83,12 @@ class SoftMLoss(nn.Module):
 
 
 def main():
-    batch_size = 200
-    stp = 5
-    x = torch.randn(size=(batch_size, 1, 64, 64))
-    myloss = SoftMLoss(batch_size=batch_size, framepercam=stp)
-    loss = myloss(x)
-    print(loss)
+    batch_size = 20
+    stp = 4
+    x = torch.randn(size=(2, 5))
+    print(x)
+    print(torch.softmax(x, dim=1))
+ 
 
 
 if __name__ == '__main__':
