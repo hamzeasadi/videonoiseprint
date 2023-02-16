@@ -25,6 +25,8 @@ class OneClassLoss(nn.Module):
 
 
     def forward(self, R1, R2, Y):
+        R1 = R1.squeeze()
+        R2 = R2.squeeze()
         logits = torch.linalg.matrix_norm(torch.subtract(R1, R2), dim=(1,2))
         p = torch.softmax(-logits, dim=0)
         l1 = -self.reg*calc_psd(R1, R2)
