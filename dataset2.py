@@ -13,7 +13,7 @@ dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def datasetemp(datapath):
     listofcam = cfg.rm_ds(os.listdir(datapath))
-    patches = [f'patch({i}_{j})' for i in range(11) for j in range(20)]
+    patches = [f'patch_{i}_{j}' for i in range(11) for j in range(20)]
     temp = []
     for cam in listofcam:
         for patch in patches:
