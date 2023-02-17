@@ -89,7 +89,7 @@ def main():
     listofmodels = os.listdir(cfg.paths['model'])
     # state = kt.load_ckp(fname=listofmodels[-1])
     # state = kt.load_ckp(fname=f'noisprintcoord2_{50}.pt')
-    state = kt.load_ckp(fname='noisprintcoord2_9.pt')
+    state = kt.load_ckp(fname='noisprintcoord2_24.pt')
     print(state['trainloss'], state['valloss'])
     model = m.VideoPrint(inch=1, depth=15)
     model = nn.DataParallel(model)

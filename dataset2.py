@@ -45,11 +45,11 @@ class VideoNoiseDataset(Dataset):
             img2rand = imglist[1]
 
             img01 = cv2.imread(os.path.join(imgs[0], img1rand))
-            img1 = self.trf((img01-127)/255)
+            img1 = self.trf((img01-0)/255)
 
 
             img02 = cv2.imread(os.path.join(imgs[1], img2rand))
-            img2 = self.trf((img02-127)/255)
+            img2 = self.trf((img02-0)/255)
 
             y = torch.tensor([1], device=dev, dtype=torch.float32)
 
@@ -60,11 +60,11 @@ class VideoNoiseDataset(Dataset):
             img2rand = random.sample(os.listdir(imgs[1]), 1)
 
             img01 = cv2.imread(os.path.join(imgs[0], img1rand[0]))
-            img1 = self.trf((img01-127)/255)
+            img1 = self.trf((img01-0)/255)
 
 
             img02 = cv2.imread(os.path.join(imgs[1], img2rand[0]))
-            img2 = self.trf((img02-127)/255)
+            img2 = self.trf((img02-0)/255)
 
             y = torch.tensor([0], device=dev, dtype=torch.float32)
     
