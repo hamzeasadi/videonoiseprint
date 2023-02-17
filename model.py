@@ -14,7 +14,7 @@ class VideoPrint(nn.Module):
         self.depth = depth
         self.inch = inch
         self.noisext = self.blks()
-        self.tnh = nn.Tanh()
+        self.sig = nn.Sigmoid()
 
     def blks(self):
         firstlayer = nn.Sequential(nn.Conv2d(in_channels=self.inch, out_channels=64, kernel_size=3, stride=1, padding='same'), nn.ReLU())
@@ -30,7 +30,7 @@ class VideoPrint(nn.Module):
         return fullmodel
 
     def forward(self, x):
-        out = self.tnh(self.noisext(x))
+        out = self.sig(self.noisext(x))
         res = x[:, 0:1, :, :] - out
         return res
 

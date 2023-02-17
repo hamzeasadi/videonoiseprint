@@ -87,18 +87,18 @@ def main():
     listofmodels = os.listdir(cfg.paths['model'])
     # state = kt.load_ckp(fname=listofmodels[-1])
     # state = kt.load_ckp(fname=f'noisprintcoord2_{50}.pt')
-    state = kt.load_ckp(fname='noisprintcoord2_9.pt')
+    state = kt.load_ckp(fname='noisprintcoord2_151.pt')
     print(state['trainloss'], state['valloss'])
-    model = m2.VideoPrint(inch=1, depth=15)
+    model = m.VideoPrint(inch=1, depth=15)
     model = nn.DataParallel(model)
     model.load_state_dict(state['model'], strict=True)
     model.eval()
     with torch.no_grad():
-        out, _ = model(imgt, imgt)
+        out= model(imgt)
         print(out.shape)
     
     img1 = out.detach().squeeze().numpy()
-    print(img1)
+    # print(img1)
     plt.imshow(img1, cmap='gray')
     plt.show()
 

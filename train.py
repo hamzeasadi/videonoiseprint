@@ -73,7 +73,7 @@ def main():
     model = m.VideoPrint(inch=inch, depth=args.depth)
     model = nn.DataParallel(model)
     model.to(dev)
-    optimizer = optim.Adam(params=model.parameters())
+    optimizer = optim.Adam(params=model.parameters(), lr=3e-4)
     # crt = utils.OneClassLoss(batch_size=args.batch_size, num_cams=9, margin=args.margin, reg=args.reg)
 
     if args.train:
