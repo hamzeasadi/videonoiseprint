@@ -106,11 +106,11 @@ class OneClassLoss(nn.Module):
         # logits = torch.softmax(newlogits, dim=1)
         
         # # logitsmargin = logits + self.m
-        # logits = self.m - torch.square(distmatrix)
-        # l1 = self.crt(logits, self.lbls)
+        logits = self.m - torch.square(distmatrix)
+        l1 = self.crt(logits, self.lbls)
         l2 = self.reg*calc_psd(x=Xs)
-        l3 = self.newloss(Xs)
-        return l3- l2
+        # l3 = self.newloss(Xs)
+        return l1- l2
 
 
 
