@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     constlayer = model.constlayer
     x1x2, lbl = dataset[10]
-    out = constlayer(x1x2)
+    out = constlayer(x1x2.to(dev))
     out1 = out[0]
     out = out1.cpu().detach().numpy()
     fig, axs = plt.subplots(1, 4)
