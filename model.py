@@ -5,6 +5,7 @@ from torch import nn as nn
 from torchvision import models
 from torchinfo import summary
 import lossfunction  
+import numpy as np
 
 class ConstLayer(nn.Module):
     def __init__(self, ks, inch, outch, num_classes, dev):
@@ -43,15 +44,19 @@ if __name__ == '__main__':
     ks = 5
     inch = 1
     outch = 3
-    x = torch.randn(1,1,450,450)
+    x = torch.randn(2,1,450,450)
     net = ConstLayer(ks=ks, inch=inch, outch=outch, num_classes=28, dev='cpu')
     net.resnet.fc = nn.Identity()
     out1, out2, out3 = net(x)
+    out1 = out1.detach()
     print(out1.shape)
+    
+    score = (np.dot(out1[0].numpy(), out1[1].numpy()))/(np.linalg.norm(out1[0].numpy())*np.linalg.norm(out1[1].numpy()))
+    print(score)
 
-    const = net.constlayer
-    out1 = const(x)
-    print(out1.shape)
+    # const = net.constlayer
+    # out1 = const(x)
+    # print(out1.shape)
 
  
 

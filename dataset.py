@@ -36,7 +36,7 @@ class Eval_vision(Dataset):
 
         img1t = torch.from_numpy(img1/255).unsqueeze(dim=0).unsqueeze(dim=0).float()
         img2t = torch.from_numpy(img2/255).unsqueeze(dim=0).unsqueeze(dim=0).float()
-        return torch.concat((img1t, img2t), dim=0), torch.tensor(mypair[2])
+        return torch.concat((img1t, img2t), dim=0), mypair[2]
     
 
         
