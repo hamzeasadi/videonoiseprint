@@ -30,7 +30,7 @@ def pairs(path:str, max_pair:int=15):
         for i in range(len(cam_1_data)):
             path1 = os.path.join(path, npair[0], cam_1_data[i])
             path2 = os.path.join(path, npair[1], cam_2_data[i])
-            total_pairs[pair_cnt] = (path1, path2, 1)
+            total_pairs[pair_cnt] = (path1, path2, 0)
             pair_cnt += 1
 
 
