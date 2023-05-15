@@ -15,6 +15,7 @@ import dataset as dst
 
 parser = argparse.ArgumentParser(prog=os.path.basename(__file__), description='eval config')
 parser.add_argument('--ckpoint_num', '-ckpn', type=int, required=True)
+# parser.add_argument('--res', action=argparse.BooleanOptionalAction, default=False)
 
 args = parser.parse_args()
 
@@ -48,18 +49,33 @@ if __name__ == '__main__':
     model.eval()
     y_t = []
     y_p = []
-    with torch.no_grad():
-        for i in range(num_pairs):
-            x1x2, lbl = dataset[i]
-            out1, out2, out3 = model(x1x2.to(dev))
-            y_t.append(lbl)
-            score = cosime_score(out1)
-            y_p.append(score)
+    # with torch.no_grad():
+    #     for i in range(num_pairs):
+    #         x1x2, lbl = dataset[i]
+    #         out1, out2, out3 = model(x1x2.to(dev))
+    #         y_t.append(lbl)
+    #         score = cosime_score(out1)
+    #         y_p.append(score)
 
-    precision, recall, thresholds = precision_recall_curve(y_t, y_p)
-    auc = roc_auc_score(y_t, y_p)
+    # precision, recall, thresholds = precision_recall_curve(y_t, y_p)
+    # auc = roc_auc_score(y_t, y_p)
 
-    print(f'auc={auc}')
+    # print(f'auc={auc}')
+
+    constlayer = model.constlayer
+    x1x2, lbl = dataset[10]
+    out = constlayer(x1x2)
+    out1 = out[0]
+    out = out1.cpu().detach().numpy()
+    fig, axs = plt.subplots(1, 4)
+    axs[0].imshow(x1x2[0].squeeze().numpy(), cmap='gray')
+    axs[1].imshow(out[0], cmap='gray')
+    axs[2].imshow(out[1], cmap='gray')
+    axs[3].imshow(out[2], cmap='gray')
+    plt.savefig(os.path.join(save_path, 'res.png'))
+
+
+
 
 
 
