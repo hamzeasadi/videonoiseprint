@@ -45,11 +45,14 @@ if __name__ == '__main__':
     outch = 3
     x = torch.randn(1,1,450,450)
     net = ConstLayer(ks=ks, inch=inch, outch=outch, num_classes=28, dev='cpu')
-    crt = nn.CrossEntropyLoss()
-
+    net.resnet.fc = nn.Identity()
     out1, out2, out3 = net(x)
-    loss = crt(out1, torch.tensor([0], dtype=torch.long))
-    print(loss)
+    print(out1.shape)
+
+    const = net.constlayer
+    out1 = const(x)
+    print(out1.shape)
+
  
 
    
