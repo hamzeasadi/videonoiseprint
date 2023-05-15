@@ -22,7 +22,7 @@ if __name__ == '__main__':
     batch_size = 128
     num_cls = 28
 
-    model = m.ConstLayer(ks=5, inch=1, outch=3, num_classes=num_cls)
+    model = m.ConstLayer(ks=5, inch=1, outch=3, num_classes=num_cls, dev=dev)
     model.to(dev)
     criterion = lf.AdaMagfaceLoss(NumClasses=28, InputFeatures=512, dev=dev)
     opt = torch.optim.Adam(params=model.parameters(), lr=lr)
