@@ -14,7 +14,7 @@ class Paths(NamedTuple):
     local_train_path:str = os.path.join(dataset, 'train')
     local_test_path:str = os.path.join(dataset, 'test')
 
-    server_train_path = ''
+    server_train_path = os.path.join(os.path.expanduser('~'), 'project', 'Datasets', 'Vision_450x450', 'train')
     server_test_path = ''
 
 

@@ -7,6 +7,7 @@ from conf import Paths
 
 
 paths = Paths()
+
 input_transform = transforms.Compose([transforms.ToTensor(), transforms.Grayscale()])
 
 def create_train_loader(batch_size:int=128):
