@@ -20,11 +20,12 @@ args = parser.parse_args()
 
 
 paths = Paths()
-dev = torch.device('cpu')
+dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# dev = torch.device('cpu')
 
 
 def cosime_score(tensor_pair):
-    X = tensor_pair.detach().numpy()
+    X = tensor_pair.cpu().detach().numpy()
     score = (np.dot(X[0],X[1]))/(np.linalg.norm(X[0])*np.linalg.norm(X[1]))
     return min(1, max(0, score))
 
@@ -43,14 +44,17 @@ if __name__ == '__main__':
     model.load_state_dict(ckpoint)
 
     model.resnet.fc = nn.Identity()
+    model.to(dev)
+    model.eval()
     y_t = []
     y_p = []
-    for i in range(num_pairs):
-        x1x2, lbl = dataset[i]
-        out1, out2, out3 = model(x1x2)
-        y_t.append(lbl)
-        score = cosime_score(out1)
-        y_p.append(score)
+    with torch.no_grad():
+        for i in range(num_pairs):
+            x1x2, lbl = dataset[i]
+            out1, out2, out3 = model(x1x2.to(dev))
+            y_t.append(lbl)
+            score = cosime_score(out1)
+            y_p.append(score)
 
     precision, recall, thresholds = precision_recall_curve(y_t, y_p)
     auc = roc_auc_score(y_t, y_p)
