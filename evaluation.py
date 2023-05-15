@@ -68,7 +68,7 @@ if __name__ == '__main__':
     out1 = out[0]
     out = out1.cpu().detach().numpy()
     fig, axs = plt.subplots(1, 4)
-    axs[0].imshow(x1x2[0].squeeze().numpy(), cmap='gray')
+    axs[0].imshow(x1x2[0].cpu().squeeze().numpy(), cmap='gray')
     axs[1].imshow(out[0], cmap='gray')
     axs[2].imshow(out[1], cmap='gray')
     axs[3].imshow(out[2], cmap='gray')
