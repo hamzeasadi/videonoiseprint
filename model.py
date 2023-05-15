@@ -44,8 +44,9 @@ if __name__ == '__main__':
     inch = 1
     outch = 3
     x = torch.randn(1,1,450,450)
-    net = ConstLayer(ks=ks, inch=inch, outch=outch, num_classes=28)
-    crt = lossfunction.AdaMagfaceLoss(NumClasses=28, InputFeatures=512, dev='cpu')
+    net = ConstLayer(ks=ks, inch=inch, outch=outch, num_classes=28, dev='cpu')
+    crt = nn.CrossEntropyLoss()
+
     out1, out2, out3 = net(x)
     loss = crt(out1, torch.tensor([0], dtype=torch.long))
     print(loss)

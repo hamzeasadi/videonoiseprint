@@ -24,9 +24,11 @@ if __name__ == '__main__':
 
     model = m.ConstLayer(ks=5, inch=1, outch=3, num_classes=num_cls, dev=dev)
     model.to(dev)
-    criterion = lf.AdaMagfaceLoss(NumClasses=28, InputFeatures=512, dev=dev)
-    criterion.to(dev)
-    opt = torch.optim.Adam(params=list(model.parameters()) + list(criterion.parameters()), lr=lr)
+    # criterion = lf.AdaMagfaceLoss(NumClasses=28, InputFeatures=512, dev=dev)
+    # criterion.to(dev)
+    # opt = torch.optim.Adam(params=list(model.parameters()) + list(criterion.parameters()), lr=lr)
+    criterion = nn.CrossEntropyLoss()
+    opt = torch.optim.Adam(params=model.parameters(), lr=lr)
     loader = dst.create_train_loader(batch_size=batch_size)
 
     for epoch in range(epochs):
