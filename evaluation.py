@@ -59,7 +59,7 @@ if __name__ == '__main__':
     precision, recall, thresholds = precision_recall_curve(y_t, y_p)
     auc = roc_auc_score(y_t, y_p)
 
-    print(f'precision={precision} recall={recall} auc={auc}')
+    print(f'auc={auc}')
 
 
 
