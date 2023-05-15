@@ -27,7 +27,7 @@ def train_step(model:nn.Module, data_loader:DataLoader, opt, criterion, dev):
         loss.backward()
         opt.step()
         epoch_loss += loss.item()
-        print(f'constloass={loss1.item()}, clsloss={loss.item()}')
+        # print(f'constloass={loss1.item()}, clsloss={loss.item()}')
 
     return epoch_loss/num_batch
 
