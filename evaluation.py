@@ -26,7 +26,7 @@ dev = torch.device('cpu')
 def cosime_score(tensor_pair):
     X = tensor_pair.detach().numpy()
     score = (np.dot(X[0],X[1]))/(np.linalg.norm(X[0])*np.linalg.norm(X[1]))
-    return score
+    return min(1, max(0, score))
 
 
 if __name__ == '__main__':
