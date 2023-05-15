@@ -63,7 +63,7 @@ if __name__ == '__main__':
     # print(f'auc={auc}')
 
     constlayer = model.constlayer
-    x1x2, lbl = dataset[10]
+    x1x2, lbl = dataset[12]
     out = constlayer(x1x2.to(dev))
     out1 = out[0]
     out = out1.cpu().detach().numpy()
