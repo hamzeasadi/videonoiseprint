@@ -16,8 +16,8 @@ class ConstLayer(nn.Module):
         self.x2[:, :, ks//2, ks//2] = 0
 
         self.resnet = models.resnet34(weights=models.ResNet34_Weights.DEFAULT)
-        # self.resnet.fc = nn.Linear(in_features=512, out_features=num_classes)
-        self.resnet.fc = nn.Identity()
+        self.resnet.fc = nn.Linear(in_features=512, out_features=num_classes)
+        # self.resnet.fc = nn.Identity()
         
         self.constlayer = nn.Conv2d(in_channels=inch, out_channels=outch, kernel_size=ks, stride=1, bias=False, padding='same')
 
