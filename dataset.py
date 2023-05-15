@@ -12,7 +12,7 @@ input_transform = transforms.Compose([transforms.ToTensor(), transforms.Grayscal
 
 def create_train_loader(batch_size:int=128):
     dataset = ImageFolder(paths.server_train_path, transform=input_transform)
-    loader = DataLoader(dataset, batch_size=batch_size, pin_memory=True, num_workers=2)
+    loader = DataLoader(dataset, batch_size=batch_size, pin_memory=True, num_workers=1)
     return loader
 
 
