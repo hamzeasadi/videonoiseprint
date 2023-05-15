@@ -19,7 +19,7 @@ dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 if __name__ == '__main__':
     epochs = 100
     lr = 1e-3
-    batch_size = 128
+    batch_size = 512
     num_cls = 28
 
     model = m.ConstLayer(ks=5, inch=1, outch=3, num_classes=num_cls, dev=dev)
