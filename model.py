@@ -7,12 +7,12 @@ from torchinfo import summary
 import lossfunction  
 
 class ConstLayer(nn.Module):
-    def __init__(self, ks, inch, outch, num_classes):
+    def __init__(self, ks, inch, outch, num_classes, dev):
         super().__init__()
-        self.x1 = torch.zeros(size=(1, 1, ks, ks))
+        self.x1 = torch.zeros(size=(1, 1, ks, ks), device=dev)
         self.x1[:, :, ks//2, ks//2] = 1
 
-        self.x2 = torch.ones(size=(1, 1, ks, ks))
+        self.x2 = torch.ones(size=(1, 1, ks, ks), device=dev)
         self.x2[:, :, ks//2, ks//2] = 0
 
         self.resnet = models.resnet34(weights=models.ResNet34_Weights.DEFAULT)
