@@ -20,11 +20,11 @@ class ConstLayer(nn.Module):
         self.resnet.fc = nn.Linear(in_features=512, out_features=num_classes)
         # self.resnet.fc = nn.Identity()
         
-        self.constlayer = nn.Conv2d(in_channels=inch, out_channels=outch, kernel_size=ks, stride=1, bias=False, padding='same')
+        self.constlayer = nn.Conv2d(in_channels=inch, out_channels=outch, kernel_size=ks, stride=1, bias=False)
 
         self.midconv = nn.Sequential(
-            nn.Conv2d(in_channels=outch, out_channels=3, kernel_size=3, stride=1, padding='same'), 
-            nn.BatchNorm2d(3), nn.ReLU(), nn.MaxPool2d(kernel_size=3, stride=2))
+            nn.Conv2d(in_channels=outch, out_channels=3, kernel_size=3, stride=1, padding=1), 
+            nn.BatchNorm2d(3), nn.ReLU(), nn.MaxPool2d(kernel_size=3, stride=2), nn.ZeroPad2d(padding=1))
 
        
 
@@ -46,17 +46,18 @@ if __name__ == '__main__':
     outch = 3
     x = torch.randn(2,1,450,450)
     net = ConstLayer(ks=ks, inch=inch, outch=outch, num_classes=28, dev='cpu')
-    net.resnet.fc = nn.Identity()
-    out1, out2, out3 = net(x)
-    out1 = out1.detach()
-    print(out1.shape)
-    
-    score = (np.dot(out1[0].numpy(), out1[1].numpy()))/(np.linalg.norm(out1[0].numpy())*np.linalg.norm(out1[1].numpy()))
-    print(score)
+   
+    # layer = net.constlayer
+    out,_,_ = net(x)
+    print(out.shape)
 
-    # const = net.constlayer
-    # out1 = const(x)
-    # print(out1.shape)
+
+
+    
+
+
+
+   
 
  
 
