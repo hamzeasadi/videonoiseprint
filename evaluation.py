@@ -49,18 +49,18 @@ if __name__ == '__main__':
     model.eval()
     y_t = []
     y_p = []
-    # with torch.no_grad():
-    #     for i in range(num_pairs):
-    #         x1x2, lbl = dataset[i]
-    #         out1, out2, out3 = model(x1x2.to(dev))
-    #         y_t.append(lbl)
-    #         score = cosime_score(out1)
-    #         y_p.append(score)
+    with torch.no_grad():
+        for i in range(num_pairs):
+            x1x2, lbl = dataset[i]
+            out1, out2, out3 = model(x1x2.to(dev))
+            y_t.append(lbl)
+            score = cosime_score(out1)
+            y_p.append(score)
 
-    # precision, recall, thresholds = precision_recall_curve(y_t, y_p)
-    # auc = roc_auc_score(y_t, y_p)
+    precision, recall, thresholds = precision_recall_curve(y_t, y_p)
+    auc = roc_auc_score(y_t, y_p)
 
-    # print(f'auc={auc}')
+    print(f'auc={auc}')
 
     constlayer = model.constlayer
     x1x2, lbl = dataset[12]
